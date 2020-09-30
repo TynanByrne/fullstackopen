@@ -1,0 +1,17 @@
+title New note creation (traditional)
+
+Browser->Server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note
+Server-->Browser: HTTP 302 URL redirection to Location: /exampleapp/notes
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+Server-->Browser: HTTP 304 Not Modified, HTML-code
+Browser->Server: HTTP GET path: /exampleapp/main.css
+Server-->Browser: HTTP 304 Not Modified, main.css
+Browser->Server: HTTP GET path: /exampleapp/main.js
+Server-->Browser: HTTP 304 Not Modified, main.js
+note over Browser: JavaScript code executes, and requests JSON data from server
+end note
+Browser->Server: HTTP GET path: /exampleapp/data.json
+Server-->Browser: HTTP 200 OK, JSON data
+note over Browser: Browser executes the event handler in the JS code to render the notes to display
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/favicon.ico
+Server-->Browser: HTTP 200 OK, favicon.ico

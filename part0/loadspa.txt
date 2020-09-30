@@ -1,0 +1,14 @@
+title Load SPA
+
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa
+Server-->Browser: 304, loads HTML-code
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+Server-->Browser: 304, main.css
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa.js
+Server-->Browser: 304, spa.js
+note over Browser: JS code runs and requests JSON data from server
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+Server-->Browser: 304, [{content: "", date: "2020-09-29T20:25:01.967Z"}, ...
+note over Browser: Browsers executes the event handler that renders notes to display
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/favicon.ico
+Server-->Browser: HTTP 200 OK, favicon.ico
