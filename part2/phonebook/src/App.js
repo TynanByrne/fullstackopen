@@ -31,19 +31,27 @@ const App = () => {
     personsService
       .updatePerson(updatedPerson)
       .then(res => {
-        console.log(res)
         setPersons(persons.map(p => p.id === res.id ? res : p))
         setMessage({ text: `Updated ${res.name}'s phone number`, type: "success" })
         setTimeout(() => {
-          setMessage(null)
-        }, 3000)
-      })
-      .catch(error => {
-        setMessage({text: `${updatedPerson.name} has already been removed from the server`, type: "error" })
-        setPersons(persons.filter(p => p.id !== id))
-        setTimeout(() => {
           setMessage({ text: null, type: "" })
         }, 3000)
+        return res
+      })
+      .catch(error => {
+        console.log(error.response)
+        if (error.response.data.error.errors.number.name === 'ValidatorError') {
+          setMessage({ text: `${error.response.data.error.message}`, type: "error" })
+          setTimeout(() => {
+            setMessage({ text: null, type: "" })
+          }, 3000)
+        } else {
+          setMessage({ text: `${updatedPerson.name} has already been removed from the server`, type: "error" })
+          setPersons(persons.filter(p => p.id !== id))
+          setTimeout(() => {
+            setMessage({ text: null, type: "" })
+          }, 3000)
+        }
       })
   }
 
@@ -64,10 +72,16 @@ const App = () => {
           setPersons(persons.concat(res))
           setMessage(`Added ${res.name}'s phone number to the phonebook`, "success")
           setTimeout(() => {
-            setMessage({text: null, type: "" })
+            setMessage({ text: null, type: "" })
           }, 3000)
         })
-        
+        .catch(error => {
+          console.log(error.response)
+          setMessage({ text: `${error.response.data.error.message}`, type: "error" })
+          setTimeout(() => {
+            setMessage({ text: null, type: "" })
+          }, 3000)
+        })
     }
     setNewName('')
     setNewNumber('')
@@ -80,7 +94,7 @@ const App = () => {
         .deletePerson(person.id)
         .then(() => {
           setPersons(persons.filter(p => p.id !== person.id))
-          setMessage({text: `Deleted ${person.name} from the phonebook`, type: "success"})
+          setMessage({ text: `Deleted ${person.name} from the phonebook`, type: "success" })
           setTimeout(() => {
             setMessage({ text: null, type: "" })
           }, 3000)
