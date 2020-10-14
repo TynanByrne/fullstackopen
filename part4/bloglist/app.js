@@ -4,34 +4,23 @@ const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
 const Blog = require('./models/blog')
+const logger = require('./utils/logger')
+const blogsRouter = require('./controllers/blogs')
+
+logger.info(`Connecting to MONGO through ${config.MONGODB_URI}...`)
 
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
   .then(() => {
-    console.log('connected to MONGO')
+    logger.info('connected to MONGO')
   })
   .catch(error => {
-    console.log('error connecting to MONGO', error.message)
+    logger.info('error connecting to MONGO', error.message)
   })
 
 app.use(cors())
 app.use(express.json())
+app.use('/api/blogs', blogsRouter)
 
-app.get('api/blogs', (req, res) => {
-  Blog
-    .find({})
-    .then(blogs => {
-      res.json(blogs)
-    })
-})
 
-app.post('/api/blogs', (res, req) => {
-  const blog = new Blog(req.body)
-
-  blog
-    .save()
-    .then(result => {
-      res.status(201).json(result)
-    })
-})
 
 module.exports = app
