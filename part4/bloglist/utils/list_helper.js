@@ -23,9 +23,21 @@ const mostBlogs = (blogs) => {
   }
 }
 
+const mostLikes = (blogs) => {
+  const reducer = (accumulator, currentValue) => accumulator + currentValue
+  const authorLikes = blogs.map(blog => blogs.filter(b => b.author === blog.author).map(x => x.likes).reduce(reducer))
+  const winnerIndex = authorLikes.indexOf(Math.max(...authorLikes))
+  const winner = blogs[winnerIndex]
+  return {
+    author: winner.author,
+    likes: authorLikes[winnerIndex]
+  }
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favouriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }
