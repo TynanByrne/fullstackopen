@@ -1,0 +1,1 @@
+const tokenExtractor = request => 
