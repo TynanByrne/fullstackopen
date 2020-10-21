@@ -3,14 +3,7 @@ const Blog = require('../models/blog')
 const logger = require('../utils/logger')
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
-
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer')) {
-    return authorization.substring(7)
-  }
-  return null
-}
+const { request } = require('express')
 
 blogsRouter.get('/', (req, res) => {
   Blog
@@ -24,9 +17,9 @@ blogsRouter.get('/', (req, res) => {
 
 blogsRouter.post('/', async (request, response) => {
   const body = request.body
-  const token = getTokenFrom(request)
-  const decodedToken = jwt.verify(token, process.env.SECRET)
-  if (!token || !decodedToken.id) {
+  /* const token = getTokenFrom(request) */
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  if (!request.token || !decodedToken.id) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
   const user = await User.findById(decodedToken.id)
@@ -48,16 +41,26 @@ blogsRouter.post('/', async (request, response) => {
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
 
-  response.json(savedBlog)
+  response.status(201).json(savedBlog)
 })
 
-blogsRouter.delete('/:id', (req, res) => {
-  const id = req.params.id
-  Blog
-    .findByIdAndRemove(id)
-    .then(logger.info('Successful deletion'))
-    .then(res.status(204).end())
-    .catch(error => console.error(error))
+blogsRouter.delete('/:id', async (req, res) => {
+  const { id } = req.params
+  const decodedToken = jwt.verify(req.token, process.env.SECRET)
+  if (!req.token || !decodedToken.id) {
+    return res.status(401).json({ error: 'token missing or invalid' })
+  }
+  const blog = await Blog.findById(id)
+  const user = await User.findById(decodedToken.id)
+
+  if (blog.user.toString() === user._id.toString()) {
+    const deletedBlog = await Blog.findByIdAndRemove(id)
+    logger.info('Successful deletion')
+    res.status(204).json(deletedBlog)
+  } else {
+    res.status(401).json({ error: 'Blog deletion not authorised' })
+  }
+
 })
 
 blogsRouter.put('/:id', async (req, res) => {

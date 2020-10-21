@@ -1,8 +1,11 @@
 const supertest = require('supertest')
 const mongoose = require('mongoose')
 const app = require('../app')
+const bcrypt = require('bcrypt')
 const Test = require('supertest/lib/test')
 const Blog = require('../models/blog')
+const User = require('../models/user')
+const jwt = require('jsonwebtoken')
 const api = supertest(app)
 
 const initialBlogs = [
@@ -32,7 +35,20 @@ const initialBlogs = [
   }
 ]
 
+const getUserToken = async () => {
+  await User.deleteMany({})
 
+  const passwordHash = await bcrypt.hash('secret', 10)
+  const user = new User({ username: 'root', passwordHash })
+  await user.save()
+  const tokenUser = {
+    username: user.username,
+    id: user._id
+  }
+
+  const token = jwt.sign(tokenUser, process.env.SECRET)
+  return token
+}
 beforeEach(async () => {
   await Blog.deleteMany({})
   let blogObject = new Blog(initialBlogs[0])
@@ -64,6 +80,24 @@ describe('fetching data from API', () => {
 })
 
 describe('adding new blogs to the database', () => {
+  let token = null
+  beforeEach(async () => {
+    token = `Bearer ${await getUserToken()}`
+  })
+  test('check that it fails with status code 401 if no token is given', async () => {
+    const newBlog = {
+      title: 'Yet another test',
+      author: 'Test Testerson Jr.',
+      url: 'www.secondtest.com',
+      likes: 23
+    }
+
+    await api
+      .post('/api/blogs')
+      .set('Authorization', null )
+      .send(newBlog)
+      .expect(401)
+  })
   test('check we can add a blog to the database correctly', async () => {
     const newBlog = {
       title: 'Yet another test',
@@ -73,6 +107,7 @@ describe('adding new blogs to the database', () => {
     }
     await api
       .post('/api/blogs')
+      .set('Authorization', token )
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -91,6 +126,7 @@ describe('adding new blogs to the database', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', token )
       .send(newBlog)
 
     const response = await api.get('/api/blogs')
@@ -104,6 +140,7 @@ describe('adding new blogs to the database', () => {
     }
     await api
       .post('/api/blogs')
+      .set({ Authorization: token })
       .send(newBlog)
       .expect(400)
       .expect('Content-Type', /application\/json/)
