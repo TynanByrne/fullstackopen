@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Login from './components/Login'
 import CreateBlog from './components/CreateBlog'
+import Togglable from './components/Togglable'
 import Message from './components/Message'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -11,8 +12,8 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
+  const [title, setTitle] = useState('')
   const [url, setUrl] = useState('')
   const [message, setMessage] = useState({ text: null, type: "" })
 
@@ -28,15 +29,9 @@ const App = () => {
       setUser(user)
     }
   }, [])
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value)
-  }
-  const handleAuthorChange = (event) => {
-    setAuthor(event.target.value)
-  }
-  const handleUrlChange = (event) => {
-    setUrl(event.target.value)
-  }
+
+  const createBlogRef = useRef()
+
   const handleUsernameChange = (event) => {
     setUsername(event.target.value)
   }
@@ -72,13 +67,11 @@ const App = () => {
       }, 3000)
     }
   }
-  const handleCreateBlog = async (event) => {
-    event.preventDefault()
-
+  const addBlog = async (blogObject) => {
     try {
-      const blog = await blogService.postNew({
-        title, author, url
-      })
+      blogService.setToken(user.token)
+      const blog = await blogService.postNew(blogObject)
+      createBlogRef.current.toggleVisibility()
       setBlogs(blogs.concat(blog))
       setTitle('')
       setAuthor('')
@@ -98,6 +91,24 @@ const App = () => {
         setMessage({ text: null, type: "" })
       }, 3000)
     }
+  }
+  const deleteBlog = async (blog) => {
+    try {
+      blogService.setToken(user.token)
+      await blogService.deleteBlog(blog)
+      setBlogs(blogs.filter(x => x._id !== blog._id))
+      setMessage({ text: `Blog successfully deleted`, type: "success" })
+      setTimeout(() => {
+        setMessage({ text: null, type: "" })
+      }, 3000)
+    } catch (exception) {
+      console.error(exception)
+      setMessage({ text: `Blog could not be deleted`, type: "error" })
+      setTimeout(() => {
+        setMessage({ text: null, type: "" })
+      }, 3000)
+    }
+
   }
   if (user === null) {
     return (
@@ -124,12 +135,12 @@ const App = () => {
           }, 3000)
         }} >Log out</button>
       </p>
-      <h2>Create new</h2>
-      <CreateBlog onSubmit={handleCreateBlog} title={title} author={author}
-        url={url} handleUrlChange={handleUrlChange} handleAuthorChange={handleAuthorChange}
-        handleTitleChange={handleTitleChange} />
+      <Togglable buttonLabel={"new blog"} ref={createBlogRef}>
+        <h2>Create new</h2>
+        <CreateBlog createBlog={addBlog} user={user} />
+      </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} user={user} deleteBlog={deleteBlog} />
       )}
     </div>
   )
