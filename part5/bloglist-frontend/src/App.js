@@ -96,7 +96,7 @@ const App = () => {
     try {
       blogService.setToken(user.token)
       await blogService.deleteBlog(blog)
-      setBlogs(blogs.filter(x => x._id !== blog._id))
+      setBlogs(blogs.filter(x => x.id !== blog.id))
       setMessage({ text: `Blog successfully deleted`, type: "success" })
       setTimeout(() => {
         setMessage({ text: null, type: "" })
