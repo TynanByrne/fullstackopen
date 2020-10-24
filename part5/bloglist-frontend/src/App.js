@@ -92,6 +92,22 @@ const App = () => {
       }, 3000)
     }
   }
+  const updateBlog = async (blog) => {
+    try {
+      await blogService.updateBlog(blog)
+      setBlogs(blogs.map(x => (x.id === blog.id) ? { ...x, likes: x.likes + 1 } : x))
+      setMessage({ text: `Liked!`, type: "success" })
+      setTimeout(() => {
+        setMessage({ text: null, type: "" })
+      }, 3000)
+    } catch (exception) {
+      console.error(exception.response.data)
+      setMessage({ text: `Could not like.`, type: "error" })
+      setTimeout(() => {
+        setMessage({ text: null, type: "" })
+      }, 3000)
+    }
+  }
   const deleteBlog = async (blog) => {
     try {
       blogService.setToken(user.token)
@@ -140,7 +156,8 @@ const App = () => {
         <CreateBlog createBlog={addBlog} user={user} />
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} user={user} deleteBlog={deleteBlog} />
+        <Blog key={blog.id} blog={blog} user={user} deleteBlog={deleteBlog}
+          updateBlog={updateBlog} />
       )}
     </div>
   )
