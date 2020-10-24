@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 const Blog = ({ blog, user, deleteBlog, updateBlog }) => {
   const [visible, setVisible] = useState(false)
 
@@ -31,6 +32,13 @@ const Blog = ({ blog, user, deleteBlog, updateBlog }) => {
     }
   }
 
+  Blog.propTypes = {
+    blog: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
+    deleteBlog: PropTypes.func.isRequired,
+    updateBlog: PropTypes.func.isRequired
+  }
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -40,7 +48,7 @@ const Blog = ({ blog, user, deleteBlog, updateBlog }) => {
   }
   return (
     (visible) ?
-      <div style={blogStyle}>
+      <div style={blogStyle} className='blogDetailed'>
         {blog.title} {blog.author} <button onClick={toggleVisiblity}>hide</button>
         <div>
           <p>{blog.url}</p>
@@ -49,7 +57,7 @@ const Blog = ({ blog, user, deleteBlog, updateBlog }) => {
           {allowDelete()}
         </div>
       </div> :
-      <div style={blogStyle}>
+      <div style={blogStyle} className='blogCollapsed'>
         {blog.title} {blog.author} <button onClick={toggleVisiblity}>view</button>
       </div>
   )

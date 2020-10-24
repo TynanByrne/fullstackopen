@@ -15,7 +15,7 @@ const App = () => {
   const [author, setAuthor] = useState('')
   const [title, setTitle] = useState('')
   const [url, setUrl] = useState('')
-  const [message, setMessage] = useState({ text: null, type: "" })
+  const [message, setMessage] = useState({ text: null, type: '' })
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -32,9 +32,9 @@ const App = () => {
 
   const notification = (message, type) => {
     setMessage({ text: message, type: type })
-      setTimeout(() => {
-        setMessage({ text: null, type: "" })
-      }, 3000)
+    setTimeout(() => {
+      setMessage({ text: null, type: '' })
+    }, 3000)
   }
 
   const createBlogRef = useRef()
@@ -60,7 +60,7 @@ const App = () => {
       setUsername('')
       setPassword('')
       notification(`Logged in as ${user.username}`, 'success')
-      console.log("logged in")
+      console.log('logged in')
     } catch (exception) {
       console.error(exception)
       setUsername('')
@@ -91,7 +91,7 @@ const App = () => {
     try {
       await blogService.updateBlog(blog)
       setBlogs(blogs.map(x => (x.id === blog.id) ? { ...x, likes: x.likes + 1 } : x))
-      notification("Liked!", "success")
+      notification('Liked!', 'success')
     } catch (exception) {
       console.error(exception.response.data)
       notification('Could not like.', 'error')
@@ -140,7 +140,7 @@ const App = () => {
           notification('Logged out', 'success')
         }} >Log out</button>
       </p>
-      <Togglable buttonLabel={"new blog"} ref={createBlogRef}>
+      <Togglable buttonLabel={'new blog'} ref={createBlogRef}>
         <h2>Create new</h2>
         <CreateBlog createBlog={addBlog} user={user} />
       </Togglable>

@@ -27,7 +27,7 @@ const updateBlog = async (updatedBlog) => {
     console.error(exception.response.data)
     return exception.response.data
   }
-  
+
 }
 
 const deleteBlog = async (blog) => {
