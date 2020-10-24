@@ -30,6 +30,13 @@ const App = () => {
     }
   }, [])
 
+  const notification = (message, type) => {
+    setMessage({ text: message, type: type })
+      setTimeout(() => {
+        setMessage({ text: null, type: "" })
+      }, 3000)
+  }
+
   const createBlogRef = useRef()
 
   const handleUsernameChange = (event) => {
@@ -52,19 +59,13 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      setMessage({ text: `Logged in as ${user.username}`, type: "success" })
-      setTimeout(() => {
-        setMessage({ text: null, type: "" })
-      }, 3000)
+      notification(`Logged in as ${user.username}`, 'success')
       console.log("logged in")
     } catch (exception) {
       console.error(exception)
       setUsername('')
       setPassword('')
-      setMessage({ text: 'Wrong username or password', type: "error" })
-      setTimeout(() => {
-        setMessage({ text: null, type: "" })
-      }, 3000)
+      notification('Wrong username or password', 'error')
     }
   }
   const addBlog = async (blogObject) => {
@@ -76,36 +77,24 @@ const App = () => {
       setTitle('')
       setAuthor('')
       setUrl('')
-      setMessage({ text: `A new blog: ${blog.title} by ${blog.author}`, type: "success" })
-      setTimeout(() => {
-        setMessage({ text: null, type: "" })
-      }, 3000)
+      notification(`A new blog: ${blog.title} by ${blog.author}`, 'success')
       console.log('Blog created')
     } catch (exception) {
       console.error(exception)
       setUrl('')
       setAuthor('')
       setTitle('')
-      setMessage({ text: `Blog could not be created`, type: "error" })
-      setTimeout(() => {
-        setMessage({ text: null, type: "" })
-      }, 3000)
+      notification('Blog could not be created', 'error')
     }
   }
   const updateBlog = async (blog) => {
     try {
       await blogService.updateBlog(blog)
       setBlogs(blogs.map(x => (x.id === blog.id) ? { ...x, likes: x.likes + 1 } : x))
-      setMessage({ text: `Liked!`, type: "success" })
-      setTimeout(() => {
-        setMessage({ text: null, type: "" })
-      }, 3000)
+      notification("Liked!", "success")
     } catch (exception) {
       console.error(exception.response.data)
-      setMessage({ text: `Could not like.`, type: "error" })
-      setTimeout(() => {
-        setMessage({ text: null, type: "" })
-      }, 3000)
+      notification('Could not like.', 'error')
     }
   }
   const deleteBlog = async (blog) => {
@@ -113,19 +102,22 @@ const App = () => {
       blogService.setToken(user.token)
       await blogService.deleteBlog(blog)
       setBlogs(blogs.filter(x => x.id !== blog.id))
-      setMessage({ text: `Blog successfully deleted`, type: "success" })
-      setTimeout(() => {
-        setMessage({ text: null, type: "" })
-      }, 3000)
+      notification('Blog successfully deleted', 'success')
     } catch (exception) {
       console.error(exception)
-      setMessage({ text: `Blog could not be deleted`, type: "error" })
-      setTimeout(() => {
-        setMessage({ text: null, type: "" })
-      }, 3000)
+      notification('Blog could not be deleted', 'error')
     }
-
   }
+  const compare = (a, b) => {
+    if (a.likes < b.likes) {
+      return 1
+    }
+    if (a.likes > b.likes) {
+      return -1
+    }
+    return 0
+  }
+
   if (user === null) {
     return (
       <div>
@@ -145,17 +137,14 @@ const App = () => {
         {`${user.name} logged in`} <button onClick={() => {
           window.localStorage.removeItem('loggedBlogappUser')
           setUser(null)
-          setMessage({ text: 'Logged out', type: "success" })
-          setTimeout(() => {
-            setMessage({ text: null, type: "" })
-          }, 3000)
+          notification('Logged out', 'success')
         }} >Log out</button>
       </p>
       <Togglable buttonLabel={"new blog"} ref={createBlogRef}>
         <h2>Create new</h2>
         <CreateBlog createBlog={addBlog} user={user} />
       </Togglable>
-      {blogs.map(blog =>
+      {blogs.sort(compare).map(blog =>
         <Blog key={blog.id} blog={blog} user={user} deleteBlog={deleteBlog}
           updateBlog={updateBlog} />
       )}
