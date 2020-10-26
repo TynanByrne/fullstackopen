@@ -48,11 +48,11 @@ const Blog = ({ blog, user, deleteBlog, updateBlog }) => {
   }
   return (
     (visible) ?
-      <div id='blogs' style={blogStyle} className='blogDetailed'>
+      <div style={blogStyle} className='blogDetailed'>
         {blog.title} {blog.author} <button onClick={toggleVisiblity}>hide</button>
         <div>
           <p>{blog.url}</p>
-          <p id="likes">likes {blog.likes}<button id='like' onClick={handleLike}>like</button></p>
+          <p>likes <span id='likes'>{blog.likes}</span><button id='like' onClick={handleLike}>like</button></p>
           <p>{blog.user.name}</p>
           {allowDelete()}
         </div>

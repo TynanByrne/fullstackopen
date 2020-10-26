@@ -21,15 +21,15 @@ describe('Blog app', function () {
       cy.contains('Super Superuser logged in')
       cy.contains('Logged in as root')
     })
-    it('fails with wrong credentials', function() {
+    it('fails with wrong credentials', function () {
       cy.get('#username').type('tree')
       cy.get('#password').type('notpassword')
       cy.get('#login-button').click()
       cy.contains('Wrong username or password').should('have.css', 'background-color', 'rgb(255, 0, 0)')
     })
   })
-  describe.only('When logged in', function() {
-    beforeEach( function() {
+  describe.only('When logged in', function () {
+    beforeEach(function () {
       const user = {
         username: 'root', password: 'password'
       }
@@ -82,8 +82,25 @@ describe('Blog app', function () {
         title: "4", author: "Author4", url: "www.order.com"
       })
       cy.visit('http://localhost:3000')
-      cy.get('#blogs').expect('#blogs').to.
+      cy.contains('view').click()
+      cy.contains('view').click()
+      cy.contains('view').click()
+      cy.contains('view').click()
+      cy.get('.blogDetailed').then(blogs => {
+        console.log(blogs)
+        let previous = Number.MAX_SAFE_INTEGER
+        for (let i = 0; i < blogs.length; i++) {
+          cy.wrap(blogs[i])
+            .find("#likes")
+            .then((x) => {
+              const likes = parseInt(x[0].innerText)
+              console.log(x[0].innerText)
+              cy.log(likes)
+              expect(previous).to.be.greaterThan(likes)
+              previous = likes
+            });
+        }
+      })
     })
   })
 })
-
