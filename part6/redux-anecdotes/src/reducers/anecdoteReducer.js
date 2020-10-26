@@ -26,6 +26,27 @@ export const vote = (id) => {
   }
 }
 
+export const newAnecdote = (text) => {
+  return {
+    type: "NEW_ANECDOTE",
+    data: {
+      content: text,
+      id: getId(),
+      votes: 0
+    }
+  }
+}
+
+const compare = (a, b) => {
+  if (a.votes < b.votes) {
+    return 1
+  }
+  if (a.votes > b.votes) {
+    return -1
+  }
+  return 0
+}
+
 const reducer = (state = initialState, action) => {
   console.log('state now: ', state)
   console.log('action', action)
@@ -36,10 +57,13 @@ const reducer = (state = initialState, action) => {
       const votedAnecdote = {
         ...clickedAnecdote, votes: clickedAnecdote.votes + 1
       }
-      return state.map(anecdote => 
+      return state.map(anecdote =>
         anecdote.id === id ? votedAnecdote : anecdote
-      )
-      }
+      ).sort(compare)
+    }
+    case 'NEW_ANECDOTE': {
+      return [...state, action.data]
+    }
     default: return state
   }
 }
