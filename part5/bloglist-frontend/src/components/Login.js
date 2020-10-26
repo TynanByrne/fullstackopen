@@ -4,16 +4,16 @@ const Login = ({ onSubmit, username, password, handleUsernameChange, handlePassw
     <form onSubmit={onSubmit}>
       <div>
         username
-        <input type="text" value={username} name="Username"placeholder="Username"
+        <input id= "username" type="text" value={username} name="Username"placeholder="Username"
           onChange={handleUsernameChange} />
       </div>
       <div>
         password
-        <input type="password" value={password} name="Password" placeholder="Password"
+        <input id="password" type="password" value={password} name="Password" placeholder="Password"
           onChange={handlePasswordChange} />
       </div>
       <div>
-        <button type="submit">Log in</button>
+        <button id="login-button" type="submit">Log in</button>
       </div>
     </form>
   )

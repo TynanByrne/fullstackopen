@@ -20,7 +20,7 @@ const Blog = ({ blog, user, deleteBlog, updateBlog }) => {
     if (blog.user.username.toString() === user.username.toString()) {
       return (
         <>
-          <button type="button" onClick={() => {
+          <button id="delete" type="button" onClick={() => {
             if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
               deleteBlog(blog)
             }
@@ -48,17 +48,17 @@ const Blog = ({ blog, user, deleteBlog, updateBlog }) => {
   }
   return (
     (visible) ?
-      <div style={blogStyle} className='blogDetailed'>
+      <div id='blogs' style={blogStyle} className='blogDetailed'>
         {blog.title} {blog.author} <button onClick={toggleVisiblity}>hide</button>
         <div>
           <p>{blog.url}</p>
-          <p>likes {blog.likes}<button onClick={handleLike}>like</button></p>
+          <p id="likes">likes {blog.likes}<button id='like' onClick={handleLike}>like</button></p>
           <p>{blog.user.name}</p>
           {allowDelete()}
         </div>
       </div> :
       <div style={blogStyle} className='blogCollapsed'>
-        {blog.title} {blog.author} <button onClick={toggleVisiblity}>view</button>
+        {blog.title} {blog.author} <button id="view" onClick={toggleVisiblity}>view</button>
       </div>
   )
 }

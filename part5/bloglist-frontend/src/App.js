@@ -73,7 +73,7 @@ const App = () => {
       blogService.setToken(user.token)
       const blog = await blogService.postNew(blogObject)
       createBlogRef.current.toggleVisibility()
-      setBlogs(blogs.concat(blog))
+      blogService.getAll().then(blogs => setBlogs(blogs))
       setTitle('')
       setAuthor('')
       setUrl('')
