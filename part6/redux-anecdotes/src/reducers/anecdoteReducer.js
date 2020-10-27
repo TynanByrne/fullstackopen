@@ -31,7 +31,6 @@ export const newAnecdote = (text) => {
     type: "NEW_ANECDOTE",
     data: {
       content: text,
-      id: getId(),
       votes: 0
     }
   }
@@ -47,7 +46,7 @@ const compare = (a, b) => {
   return 0
 }
 
-const anecdoteReducer = (state = initialState, action) => {
+const anecdoteReducer = (state = [], action) => {
   console.log('state now: ', state)
   console.log('action', action)
   switch (action.type) {
@@ -61,9 +60,10 @@ const anecdoteReducer = (state = initialState, action) => {
         anecdote.id === id ? votedAnecdote : anecdote
       ).sort(compare)
     }
-    case 'NEW_ANECDOTE': {
+    case 'NEW_ANECDOTE':
       return [...state, action.data]
-    }
+    case 'INIT_ANECDOTES':
+      return action.data
     default: return state
   }
 }

@@ -1,6 +1,5 @@
 const initialState = { 
-  message: 'This is a message',
-  visible: true
+  visible: false
 }
 
 export const removeNotification = () => {
