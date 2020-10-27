@@ -9,7 +9,7 @@ const AnecdoteList = () => {
   const filterTerm = useSelector(state => state.filter.filterTerm)
   const anecdotes = useSelector(state => state.anecdotes)
   console.log(anecdotes)
-  const anecdotesToShow = anecdotes.filter(anecdote => anecdote.content.toUppercase().includes(filterTerm.toUppercase()))
+  const anecdotesToShow = anecdotes.filter(anecdote => anecdote.content.toUpperCase().includes(filterTerm.toUpperCase()))
   const dispatch = useDispatch()
 
   const voteFor = (id, message) => {
