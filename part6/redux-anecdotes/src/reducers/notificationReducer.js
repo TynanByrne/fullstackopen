@@ -2,17 +2,18 @@ const initialState = {
   visible: false
 }
 
-export const removeNotification = () => {
-  return {
-    type: 'REMOVE_NOTIFICATION',
-    data: { visible: false }
-  }
-}
-
-export const setNotification = (message) => {
-  return {
-    type: 'SET_NOTIFICATION',
-    data: { message, visible: true }
+export const setNotification = (message, timeout) => {
+  return async dispatch => {
+    dispatch({
+      type: 'SET_NOTIFICATION',
+      data: { message, visible: true }
+    })
+    setTimeout(() => {
+      dispatch({
+        type: 'REMOVE_NOTIFICATION',
+        data:  { visible: false }
+      })
+    }, timeout * 1000)
   }
 }
 
