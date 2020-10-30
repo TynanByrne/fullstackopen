@@ -19,22 +19,23 @@ const asObject = (anecdote) => {
   }
 }
 
-/* const initialState = anecdotesAtStart.map(asObject) */
-
-export const vote = (id) => {
-  return {
-    type: 'VOTE',
-    data: { id }
+export const createAnecdote = (text) => {
+  return async dispatch => {
+    const newAnecdote = await anecdoteService.createNew(text)
+    dispatch({
+      type: 'NEW_ANECDOTE',
+      data: newAnecdote,
+    })
   }
 }
 
-export const newAnecdote = (text) => {
-  return {
-    type: "NEW_ANECDOTE",
-    data: {
-      content: text,
-      votes: 0
-    }
+export const updateAnecdote = (anecdote) => {
+  return async dispatch => {
+    const updatedAnecdote = await anecdoteService.updateObject(anecdote)
+    dispatch({
+      type: 'VOTE',
+      data: updatedAnecdote,
+    })
   }
 }
 

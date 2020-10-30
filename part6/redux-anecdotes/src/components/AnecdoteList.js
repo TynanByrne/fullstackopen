@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { vote } from '../reducers/anecdoteReducer'
+import { updateAnecdote } from '../reducers/anecdoteReducer'
 import { setNotification, removeNotification } from '../reducers/notificationReducer'
 
 
@@ -12,9 +12,9 @@ const AnecdoteList = () => {
   const anecdotesToShow = anecdotes.filter(anecdote => anecdote.content.toUpperCase().includes(filterTerm.toUpperCase()))
   const dispatch = useDispatch()
 
-  const voteFor = (id, message) => {
-    console.log('vote', id)
-    dispatch(vote(id))
+  const voteFor = (anecdote, message) => {
+    console.log('vote', anecdote.id)
+    dispatch(updateAnecdote(anecdote))
     voteNotification(message)
   }
 
@@ -33,7 +33,7 @@ const AnecdoteList = () => {
           </div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => voteFor(anecdote.id, `You voted for "${anecdote.content}"`)}>vote</button>
+            <button onClick={() => voteFor(anecdote, `You voted for "${anecdote.content}"`)}>vote</button>
           </div>
         </div>
       )}
