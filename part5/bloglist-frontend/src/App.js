@@ -6,6 +6,7 @@ import Togglable from './components/Togglable'
 import Message from './components/Message'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { setNotification } from './reducers/notificationReducer'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -59,13 +60,13 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      notification(`Logged in as ${user.username}`, 'success')
+      setNotification(`Logged in as ${user.username}`, 'success', 4)
       console.log('logged in')
     } catch (exception) {
       console.error(exception)
       setUsername('')
       setPassword('')
-      notification('Wrong username or password', 'error')
+      setNotification('Wrong username or password', 'error', 3)
     }
   }
   const addBlog = async (blogObject) => {
@@ -121,7 +122,7 @@ const App = () => {
   if (user === null) {
     return (
       <div>
-        <Message message={message} />
+        <Message />
         <h2>Log in to application</h2>
         <Login onSubmit={handleLogin} password={password} username={username}
           handlePasswordChange={handlePasswordChange} handleUsernameChange={handleUsernameChange} />
@@ -132,7 +133,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Message message={message} />
+      <Message />
       <p>
         {`${user.name} logged in`} <button onClick={() => {
           window.localStorage.removeItem('loggedBlogappUser')
