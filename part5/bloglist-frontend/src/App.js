@@ -78,14 +78,14 @@ const App = () => {
       setTitle('')
       setAuthor('')
       setUrl('')
-      notification(`A new blog: ${blog.title} by ${blog.author}`, 'success')
+      setNotification(`A new blog: ${blog.title} by ${blog.author}`, 'success', 5)
       console.log('Blog created')
     } catch (exception) {
       console.error(exception)
       setUrl('')
       setAuthor('')
       setTitle('')
-      notification('Blog could not be created', 'error')
+      setNotification('Blog could not be created', 'error', 5)
     }
   }
   const updateBlog = async (blog) => {
@@ -106,7 +106,7 @@ const App = () => {
       notification('Blog successfully deleted', 'success')
     } catch (exception) {
       console.error(exception)
-      notification('Blog could not be deleted', 'error')
+      setNotification('Blog could not be deleted', 'error', 5)
     }
   }
   const compare = (a, b) => {
@@ -138,7 +138,7 @@ const App = () => {
         {`${user.name} logged in`} <button onClick={() => {
           window.localStorage.removeItem('loggedBlogappUser')
           setUser(null)
-          notification('Logged out', 'success')
+          setNotification('Logged out', 'success', 5)
         }} >Log out</button>
       </p>
       <Togglable buttonLabel={'new blog'} ref={createBlogRef}>

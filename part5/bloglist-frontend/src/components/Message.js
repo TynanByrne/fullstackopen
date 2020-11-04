@@ -2,7 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 
 const Message = () => {
-  const message = useSelector(state => state.notification.message)
+  const message = useSelector(state => state.notification)
   let messageStyle
   (message.type === 'success') ?
     messageStyle = {

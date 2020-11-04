@@ -1,5 +1,7 @@
 const initialState = {
-  visible: false
+  visible: false,
+  type: null,
+  message: null
 }
 
 export const setNotification = (message, type, timeout) => {
