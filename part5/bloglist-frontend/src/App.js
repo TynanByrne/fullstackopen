@@ -7,7 +7,8 @@ import Message from './components/Message'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { setNotification } from './reducers/notificationReducer'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { getBlogs, createBlog, compare } from './reducers/blogsReducer'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -21,10 +22,9 @@ const App = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
-  }, [])
+    dispatch(getBlogs())
+  }, [dispatch])
+
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
@@ -67,13 +67,14 @@ const App = () => {
   const addBlog = async (blogObject) => {
     try {
       blogService.setToken(user.token)
-      const blog = await blogService.postNew(blogObject)
+      /* const blog = await blogService.postNew(blogObject) */
+      dispatch(createBlog(blogObject))
       createBlogRef.current.toggleVisibility()
-      blogService.getAll().then(blogs => setBlogs(blogs))
       setTitle('')
       setAuthor('')
       setUrl('')
-      dispatch(setNotification(`A new blog: ${blog.title} by ${blog.author}`, 'success', 5))
+      // FIX THIS TO HAVE THE PROPER BLOG BACK!
+      dispatch(setNotification(`A new blog: ${blogObject.title} by ${blogObject.author}`, 'success', 5))
       console.log('Blog created')
     } catch (exception) {
       console.error(exception)
@@ -104,15 +105,8 @@ const App = () => {
       dispatch(setNotification('Blog could not be deleted', 'error', 5))
     }
   }
-  const compare = (a, b) => {
-    if (a.likes < b.likes) {
-      return 1
-    }
-    if (a.likes > b.likes) {
-      return -1
-    }
-    return 0
-  }
+
+  const b = useSelector(state => state.blogs)
 
   if (user === null) {
     return (
@@ -140,7 +134,7 @@ const App = () => {
         <h2>Create new</h2>
         <CreateBlog createBlog={addBlog} user={user} />
       </Togglable>
-      {blogs.sort(compare).map(blog =>
+      {b.sort(compare).map(blog =>
         <Blog key={blog.id} blog={blog} user={user} deleteBlog={deleteBlog}
           updateBlog={updateBlog} />
       )}
