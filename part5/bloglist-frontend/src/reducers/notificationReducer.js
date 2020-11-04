@@ -1,5 +1,4 @@
 const initialState = {
-  visible: false,
   type: null,
   message: null
 }
@@ -11,7 +10,6 @@ export const setNotification = (message, type, timeout) => {
         type: 'SUCCESS_NOTIFICATION',
         data: {
           message,
-          visible: true,
           timeoutID: null,
           type: 'success'
         }
@@ -21,7 +19,6 @@ export const setNotification = (message, type, timeout) => {
         type: 'ERROR_NOTIFICATION',
         data: {
           message,
-          visible: true,
           timeoutID: null,
           type: 'error'
         }
@@ -30,7 +27,7 @@ export const setNotification = (message, type, timeout) => {
     const timeoutID = setTimeout(() => {
       dispatch({
         type: 'REMOVE_NOTIFICATION',
-        data: { visible: false, timeoutID: null }
+        data: { type: null, timeoutID: null }
       })
     }, timeout * 1000)
     dispatch({

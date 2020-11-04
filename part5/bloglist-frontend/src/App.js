@@ -7,6 +7,7 @@ import Message from './components/Message'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { setNotification } from './reducers/notificationReducer'
+import { useDispatch } from 'react-redux'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -16,7 +17,8 @@ const App = () => {
   const [author, setAuthor] = useState('')
   const [title, setTitle] = useState('')
   const [url, setUrl] = useState('')
-  const [message, setMessage] = useState({ text: null, type: '' })
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -30,13 +32,6 @@ const App = () => {
       setUser(user)
     }
   }, [])
-
-  const notification = (message, type) => {
-    setMessage({ text: message, type: type })
-    setTimeout(() => {
-      setMessage({ text: null, type: '' })
-    }, 3000)
-  }
 
   const createBlogRef = useRef()
 
@@ -60,13 +55,13 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      setNotification(`Logged in as ${user.username}`, 'success', 4)
+      dispatch(setNotification(`Logged in as ${user.username}`, 'success', 4))
       console.log('logged in')
     } catch (exception) {
       console.error(exception)
       setUsername('')
       setPassword('')
-      setNotification('Wrong username or password', 'error', 3)
+      dispatch(setNotification('Wrong username or password', 'error', 3))
     }
   }
   const addBlog = async (blogObject) => {
@@ -78,24 +73,24 @@ const App = () => {
       setTitle('')
       setAuthor('')
       setUrl('')
-      setNotification(`A new blog: ${blog.title} by ${blog.author}`, 'success', 5)
+      dispatch(setNotification(`A new blog: ${blog.title} by ${blog.author}`, 'success', 5))
       console.log('Blog created')
     } catch (exception) {
       console.error(exception)
       setUrl('')
       setAuthor('')
       setTitle('')
-      setNotification('Blog could not be created', 'error', 5)
+      dispatch(setNotification('Blog could not be created', 'error', 5))
     }
   }
   const updateBlog = async (blog) => {
     try {
       await blogService.updateBlog(blog)
       setBlogs(blogs.map(x => (x.id === blog.id) ? { ...x, likes: x.likes + 1 } : x))
-      notification('Liked!', 'success')
+      dispatch(setNotification('Liked!', 'success', 4))
     } catch (exception) {
       console.error(exception.response.data)
-      notification('Could not like.', 'error')
+      dispatch(setNotification('Could not like.', 'error', 4))
     }
   }
   const deleteBlog = async (blog) => {
@@ -103,10 +98,10 @@ const App = () => {
       blogService.setToken(user.token)
       await blogService.deleteBlog(blog)
       setBlogs(blogs.filter(x => x.id !== blog.id))
-      notification('Blog successfully deleted', 'success')
+      dispatch(setNotification('Blog successfully deleted', 'success'))
     } catch (exception) {
       console.error(exception)
-      setNotification('Blog could not be deleted', 'error', 5)
+      dispatch(setNotification('Blog could not be deleted', 'error', 5))
     }
   }
   const compare = (a, b) => {
@@ -138,7 +133,7 @@ const App = () => {
         {`${user.name} logged in`} <button onClick={() => {
           window.localStorage.removeItem('loggedBlogappUser')
           setUser(null)
-          setNotification('Logged out', 'success', 5)
+          dispatch(setNotification('Logged out', 'success', 5))
         }} >Log out</button>
       </p>
       <Togglable buttonLabel={'new blog'} ref={createBlogRef}>

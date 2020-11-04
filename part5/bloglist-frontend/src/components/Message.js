@@ -30,7 +30,7 @@ const Message = () => {
       null :
       (
         <div style={messageStyle}>
-          {message.text}
+          {message.message}
         </div>
       )
   )
