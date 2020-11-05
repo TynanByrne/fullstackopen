@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-const Blog = ({ blog, user, deleteBlog, updateBlog }) => {
+const Blog = ({ blog, user, handleDelete, handleUpdate }) => {
   const [visible, setVisible] = useState(false)
 
   const toggleVisiblity = () => {
@@ -13,16 +13,19 @@ const Blog = ({ blog, user, deleteBlog, updateBlog }) => {
       ...blog, likes: blog.likes + 1, user: blog.user.id
     }
     console.log(updatedBlog)
-    updateBlog(updatedBlog)
+    handleUpdate(updatedBlog)
   }
 
   const allowDelete = () => {
+    if (!blog.user.username) {
+      return null
+    }
     if (blog.user.username.toString() === user.username.toString()) {
       return (
         <>
           <button id="delete" type="button" onClick={() => {
             if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-              deleteBlog(blog)
+              handleDelete(blog)
             }
           }}>
             Delete
@@ -53,12 +56,12 @@ const Blog = ({ blog, user, deleteBlog, updateBlog }) => {
         <div>
           <p>{blog.url}</p>
           <p>likes <span id='likes'>{blog.likes}</span><button id='like' onClick={handleLike}>like</button></p>
-          <p>{blog.user.name}</p>
+          <p> added by {blog.user.name}</p>
           {allowDelete()}
         </div>
       </div> :
       <div style={blogStyle} className='blogCollapsed'>
-        {blog.title} {blog.author} <button id="view" onClick={toggleVisiblity}>view</button>
+        {blog.title} by {blog.author} <button id="view" onClick={toggleVisiblity}>view</button>
       </div>
   )
 }

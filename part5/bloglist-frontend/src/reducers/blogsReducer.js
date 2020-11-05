@@ -12,19 +12,25 @@ export const getBlogs = () => {
   }
 }
 
-export const createBlog = (blog) => {
+export const createBlog = (blog, user) => {
   return async dispatch => {
     const newBlog = await blogService.postNew(blog)
     dispatch({
       type: 'POST_BLOG',
-      data: newBlog
+      data: {
+        ...newBlog, user: {
+          username: user.username,
+          name: user.name,
+          id: user.id
+        }
+      }
     })
   }
 }
 
 export const updateBlog = (blog) => {
   return async dispatch => {
-    const updatedBlog = await blogService.updateBlog(blog)
+    let updatedBlog = await blogService.updateBlog(blog)
     dispatch({
       type: 'UPDATE_BLOG',
       data: updatedBlog
@@ -33,7 +39,13 @@ export const updateBlog = (blog) => {
 }
 
 export const deleteBlog = (blog) => {
-
+  return async dispatch => {
+    await blogService.deleteBlog(blog)
+    dispatch({
+      type: 'DELETE_BLOG',
+      data: blog
+    })
+  }
 }
 
 export const compare = (a, b) => {
@@ -53,14 +65,12 @@ const blogsReducer = (state = initialState, action) => {
     case 'POST_BLOG':
       return [...state, action.data]
     case 'UPDATE_BLOG':
-      const id = action.data.id
-      const clickedBlog = state.find(x => x.id === id)
-      const votedBlog = {
-        ...clickedBlog, likes: clickedBlog.likes + 1
-      }
       return state.map(blog =>
-        blog.id === id ? votedBlog : blog
-        ).sort(compare)
+        blog.id === action.data.id ? action.data : blog
+      ).sort(compare)
+    case 'DELETE_BLOG':
+      return state.filter(blog =>
+        blog.id !== action.data.id)
     default: return state
   }
 }

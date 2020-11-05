@@ -8,98 +8,49 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import { setNotification } from './reducers/notificationReducer'
 import { useDispatch, useSelector } from 'react-redux'
-import { getBlogs, createBlog, compare } from './reducers/blogsReducer'
+import { getBlogs, createBlog, compare, deleteBlog, updateBlog } from './reducers/blogsReducer'
+import { loginFromLocalStorage, logoutUser, loginUser } from './reducers/loginReducer'
+import useField from './hooks/useField'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-  const [user, setUser] = useState(null)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [author, setAuthor] = useState('')
-  const [title, setTitle] = useState('')
-  const [url, setUrl] = useState('')
+
+  const { reset: resetTitle, ...titleInput } = useField('text')
+  const { reset: resetAuthor, ...authorInput } = useField('text')
+  const { reset: resetUrl, ...urlInput } = useField('text')
 
   const dispatch = useDispatch()
 
+  const resetBlog = () => {
+    resetTitle()
+    resetAuthor()
+    resetUrl()
+  }
+
   useEffect(() => {
+    dispatch(loginFromLocalStorage())
     dispatch(getBlogs())
   }, [dispatch])
 
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-    }
-  }, [])
-
   const createBlogRef = useRef()
+  const loggedInUser = useSelector(state => state.login)
 
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value)
-  }
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value)
-  }
-  const handleLogin = async (event) => {
-    event.preventDefault()
-
+  
+  
+  const handleUpdate = async (blog) => {
     try {
-      const user = await loginService.login({
-        username, password
-      })
-      window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user)
-      )
-      blogService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
-      dispatch(setNotification(`Logged in as ${user.username}`, 'success', 4))
-      console.log('logged in')
-    } catch (exception) {
-      console.error(exception)
-      setUsername('')
-      setPassword('')
-      dispatch(setNotification('Wrong username or password', 'error', 3))
-    }
-  }
-  const addBlog = async (blogObject) => {
-    try {
-      blogService.setToken(user.token)
-      /* const blog = await blogService.postNew(blogObject) */
-      dispatch(createBlog(blogObject))
-      createBlogRef.current.toggleVisibility()
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-      // FIX THIS TO HAVE THE PROPER BLOG BACK!
-      dispatch(setNotification(`A new blog: ${blogObject.title} by ${blogObject.author}`, 'success', 5))
-      console.log('Blog created')
-    } catch (exception) {
-      console.error(exception)
-      setUrl('')
-      setAuthor('')
-      setTitle('')
-      dispatch(setNotification('Blog could not be created', 'error', 5))
-    }
-  }
-  const updateBlog = async (blog) => {
-    try {
-      await blogService.updateBlog(blog)
-      setBlogs(blogs.map(x => (x.id === blog.id) ? { ...x, likes: x.likes + 1 } : x))
+      blogService.setToken(loggedInUser.token)
+      dispatch(updateBlog(blog))
       dispatch(setNotification('Liked!', 'success', 4))
     } catch (exception) {
       console.error(exception.response.data)
       dispatch(setNotification('Could not like.', 'error', 4))
     }
   }
-  const deleteBlog = async (blog) => {
+  const handleDelete = async (blog) => {
     try {
-      blogService.setToken(user.token)
-      await blogService.deleteBlog(blog)
-      setBlogs(blogs.filter(x => x.id !== blog.id))
-      dispatch(setNotification('Blog successfully deleted', 'success'))
+      blogService.setToken(loggedInUser.token)
+      dispatch(deleteBlog(blog))
+      dispatch(setNotification('Blog successfully deleted', 'success', 4))
     } catch (exception) {
       console.error(exception)
       dispatch(setNotification('Blog could not be deleted', 'error', 5))
@@ -108,13 +59,12 @@ const App = () => {
 
   const b = useSelector(state => state.blogs)
 
-  if (user === null) {
+  if (loggedInUser === null) {
     return (
       <div>
         <Message />
         <h2>Log in to application</h2>
-        <Login onSubmit={handleLogin} password={password} username={username}
-          handlePasswordChange={handlePasswordChange} handleUsernameChange={handleUsernameChange} />
+        <Login dispatch={dispatch} />
       </div>
     )
   }
@@ -124,19 +74,18 @@ const App = () => {
       <h2>blogs</h2>
       <Message />
       <p>
-        {`${user.name} logged in`} <button onClick={() => {
-          window.localStorage.removeItem('loggedBlogappUser')
-          setUser(null)
+        {`${loggedInUser.name} logged in`} <button onClick={() => {
+          dispatch(logoutUser())
           dispatch(setNotification('Logged out', 'success', 5))
         }} >Log out</button>
       </p>
       <Togglable buttonLabel={'new blog'} ref={createBlogRef}>
         <h2>Create new</h2>
-        <CreateBlog createBlog={addBlog} user={user} />
+        <CreateBlog createBlog={addBlog} loggedInUser={loggedInUser} />
       </Togglable>
       {b.sort(compare).map(blog =>
-        <Blog key={blog.id} blog={blog} user={user} deleteBlog={deleteBlog}
-          updateBlog={updateBlog} />
+        <Blog key={blog.id} blog={blog} user={loggedInUser} handleDelete={handleDelete}
+          handleUpdate={handleUpdate} />
       )}
     </div>
   )
