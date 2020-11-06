@@ -34,6 +34,11 @@ const SingleBlog = ({ blog, handleUpdate, handleDelete, user }) => {
       <h1>{blog.title}</h1>
       <p>{blog.likes} likes<button id='like' onClick={handleLike}>like</button></p>
       <p> added by {blog.user.name}</p>
+      <h4>Comments</h4>
+      <ul>
+        {blog.comments.map(comment => 
+          <li key={comment.id}>{comment.content}</li>)}
+      </ul>
       {allowDelete()}
     </>
   )

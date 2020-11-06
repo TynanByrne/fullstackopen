@@ -2,6 +2,9 @@ import React, { useEffect, useRef } from 'react'
 import {
   Switch, Route, Link, useHistory
 } from 'react-router-dom'
+/* import {
+  AppBar
+} from '@material-ui/core' */
 import Login from './components/Login'
 import CreateBlog from './components/CreateBlog'
 import Togglable from './components/Togglable'
@@ -72,10 +75,13 @@ const App = () => {
 
   return (
     <div>
-      <div>
-        <Link to="/">home</Link>
-        <br/>
-        <Link to="/users">users</Link>
+      <div style={{backgroundColor: 'gray'}}>
+        <Link style={{padding: 5}} to="/">home</Link>
+        <Link style={{padding: 5}} to="/users">users</Link>
+        {`${loggedInUser.name} logged in`} <button onClick={() => {
+                dispatch(logoutUser())
+                dispatch(setNotification('Logged out', 'success', 5))
+              }} >Log out</button>
       </div>
       <h1>Blog app</h1>
         <Switch>
@@ -94,12 +100,6 @@ const App = () => {
           <Route path='/'>
             <h2>blogs</h2>
             <Message />
-            <p>
-              {`${loggedInUser.name} logged in`} <button onClick={() => {
-                dispatch(logoutUser())
-                dispatch(setNotification('Logged out', 'success', 5))
-              }} >Log out</button>
-            </p>
             <Togglable buttonLabel={'new blog'} ref={createBlogRef}>
               <h2>Create new</h2>
               <CreateBlog loggedInUser={loggedInUser} dispatch={dispatch} />
