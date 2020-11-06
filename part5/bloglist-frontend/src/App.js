@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import {
-  BrowserRouter as Router,
   Switch, Route, Link
 } from 'react-router-dom'
 import Login from './components/Login'
@@ -32,6 +31,7 @@ const App = () => {
   const users = useSelector(state => state.users)
 
   const user = useMatchedHook('/users/:id', users)
+  console.log("user is", user)
 
   const handleUpdate = async (blog) => {
     try {
