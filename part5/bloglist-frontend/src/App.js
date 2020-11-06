@@ -1,41 +1,36 @@
 import React, { useState, useEffect, useRef } from 'react'
-import Blog from './components/Blog'
+import {
+  BrowserRouter as Router,
+  Switch, Route, Link
+} from 'react-router-dom'
 import Login from './components/Login'
 import CreateBlog from './components/CreateBlog'
 import Togglable from './components/Togglable'
+import BlogList from './components/BlogList'
 import Message from './components/Message'
+import UserList from './components/UserList'
 import blogService from './services/blogs'
-import loginService from './services/login'
 import { setNotification } from './reducers/notificationReducer'
 import { useDispatch, useSelector } from 'react-redux'
-import { getBlogs, createBlog, compare, deleteBlog, updateBlog } from './reducers/blogsReducer'
-import { loginFromLocalStorage, logoutUser, loginUser } from './reducers/loginReducer'
-import useField from './hooks/useField'
+import { getBlogs, compare, deleteBlog, updateBlog } from './reducers/blogsReducer'
+import { loginFromLocalStorage, logoutUser } from './reducers/loginReducer'
+import { allUsers } from './reducers/usersReducer'
 
 const App = () => {
-
-  const { reset: resetTitle, ...titleInput } = useField('text')
-  const { reset: resetAuthor, ...authorInput } = useField('text')
-  const { reset: resetUrl, ...urlInput } = useField('text')
-
   const dispatch = useDispatch()
-
-  const resetBlog = () => {
-    resetTitle()
-    resetAuthor()
-    resetUrl()
-  }
 
   useEffect(() => {
     dispatch(loginFromLocalStorage())
     dispatch(getBlogs())
+    dispatch(allUsers())
   }, [dispatch])
 
   const createBlogRef = useRef()
   const loggedInUser = useSelector(state => state.login)
+  const users = useSelector(state => state.users)
 
-  
-  
+
+
   const handleUpdate = async (blog) => {
     try {
       blogService.setToken(loggedInUser.token)
@@ -57,9 +52,7 @@ const App = () => {
     }
   }
 
-  const b = useSelector(state => state.blogs)
-
-  if (loggedInUser === null) {
+  if (!loggedInUser) {
     return (
       <div>
         <Message />
@@ -70,24 +63,34 @@ const App = () => {
   }
 
   return (
-    <div>
-      <h2>blogs</h2>
-      <Message />
-      <p>
-        {`${loggedInUser.name} logged in`} <button onClick={() => {
-          dispatch(logoutUser())
-          dispatch(setNotification('Logged out', 'success', 5))
-        }} >Log out</button>
-      </p>
-      <Togglable buttonLabel={'new blog'} ref={createBlogRef}>
-        <h2>Create new</h2>
-        <CreateBlog createBlog={addBlog} loggedInUser={loggedInUser} />
-      </Togglable>
-      {b.sort(compare).map(blog =>
-        <Blog key={blog.id} blog={blog} user={loggedInUser} handleDelete={handleDelete}
-          handleUpdate={handleUpdate} />
-      )}
-    </div>
+    <Router>
+      <div>
+        <Link to="/">home</Link>
+        <br/>
+        <Link to="/users">users</Link>
+      </div>
+        <Switch>
+          <Route path='/users'>
+            <h2>Users</h2>
+            <UserList dispatch={dispatch} users={users} />
+          </Route>
+          <Route path='/'>
+            <h2>blogs</h2>
+            <Message />
+            <p>
+              {`${loggedInUser.name} logged in`} <button onClick={() => {
+                dispatch(logoutUser())
+                dispatch(setNotification('Logged out', 'success', 5))
+              }} >Log out</button>
+            </p>
+            <Togglable buttonLabel={'new blog'} ref={createBlogRef}>
+              <h2>Create new</h2>
+              <CreateBlog loggedInUser={loggedInUser} dispatch={dispatch} />
+            </Togglable>
+            <BlogList handleDelete={handleDelete} handleUpdate={handleUpdate} compare={compare} user={loggedInUser} />
+          </Route>
+        </Switch>
+    </Router>
   )
 }
 

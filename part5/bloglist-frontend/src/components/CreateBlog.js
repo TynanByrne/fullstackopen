@@ -1,7 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import useField from '../hooks/useField'
+import { setNotification } from '../reducers/notificationReducer'
+import blogService from '../services/blogs'
+import { createBlog } from '../reducers/blogsReducer'
 
-const CreateBlog = ({ loggedInUser }) => {
+const CreateBlog = ({ loggedInUser, dispatch }) => {
   
   const { reset: resetTitle, ...titleInput } = useField('text')
   const { reset: resetAuthor, ...authorInput } = useField('text')
@@ -13,20 +16,19 @@ const CreateBlog = ({ loggedInUser }) => {
     resetUrl()
   }
 
-  const addBlog = async (event) => {
+  const handleCreateBlog = async (event) => {
     event.preventDefault()
-    createBlog({
+    sendBlog({
       title: titleInput.value,
       author: authorInput.value,
       url: urlInput.value
     })
   }
 
-  const createBlog = async (blogObject) => {
+  const sendBlog = async (blogObject) => {
     try {
       blogService.setToken(loggedInUser.token)
       dispatch(createBlog(blogObject, loggedInUser))
-      createBlogRef.current.toggleVisibility()
       resetBlog()
       dispatch(setNotification(`A new blog: ${blogObject.title} by ${blogObject.author}`, 'success', 5))
       console.log('Blog created')
@@ -40,7 +42,7 @@ const CreateBlog = ({ loggedInUser }) => {
   
 
   return (
-    <form onSubmit={addBlog}>
+    <form onSubmit={handleCreateBlog}>
       <div>
         title: <input
           id="title"
