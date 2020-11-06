@@ -2,9 +2,9 @@ import React, { useEffect, useRef } from 'react'
 import {
   Switch, Route, Link, useHistory
 } from 'react-router-dom'
-/* import {
-  AppBar
-} from '@material-ui/core' */
+import {
+  AppBar, Container
+} from '@material-ui/core'
 import Login from './components/Login'
 import CreateBlog from './components/CreateBlog'
 import Togglable from './components/Togglable'
@@ -74,7 +74,7 @@ const App = () => {
   }
 
   return (
-    <div>
+    <Container>
       <div style={{backgroundColor: 'gray'}}>
         <Link style={{padding: 5}} to="/">home</Link>
         <Link style={{padding: 5}} to="/users">users</Link>
@@ -95,7 +95,7 @@ const App = () => {
           </Route>
           <Route path='/blogs/:id'>
             <Message />
-            <SingleBlog blog={blog} handleDelete={handleDelete} handleUpdate={handleUpdate} user={loggedInUser} />
+            <SingleBlog blog={blog} handleDelete={handleDelete} handleUpdate={handleUpdate} user={loggedInUser} dispatch={dispatch} />
           </Route>
           <Route path='/'>
             <h2>blogs</h2>
@@ -107,7 +107,7 @@ const App = () => {
             <BlogList blogs={blogs} handleDelete={handleDelete} handleUpdate={handleUpdate} compare={compare} user={loggedInUser} />
           </Route>
         </Switch>
-    </div>
+    </Container>
   )
 }
 

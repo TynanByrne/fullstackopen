@@ -1,4 +1,5 @@
 import blogService from '../services/blogs'
+import commentService from '../services/comments'
 
 const initialState = []
 
@@ -44,6 +45,18 @@ export const updateBlog = (blog, user) => {
   }
 }
 
+export const addComment = (blog, comment, user) => {
+  return async dispatch => {
+    const returnedComment = await commentService.createComment(comment, blog)
+    const updatedBlog = blog
+    updatedBlog.comments.push(returnedComment)
+    dispatch({
+      type: 'UPDATE_BLOG',
+      data: updatedBlog
+    })
+  }
+}
+
 export const deleteBlog = (blog) => {
   return async dispatch => {
     await blogService.deleteBlog(blog)
@@ -74,6 +87,9 @@ const blogsReducer = (state = initialState, action) => {
       return state.map(blog =>
         blog.id === action.data.id ? action.data : blog
       ).sort(compare)
+    /* case 'ADD_COMMENT':
+      return state.map(blog =>
+        blog.id === action.data.blog.id ? action.data.blog.comments.push(comment) : blog) */
     case 'DELETE_BLOG':
       return state.filter(blog =>
         blog.id !== action.data.id)

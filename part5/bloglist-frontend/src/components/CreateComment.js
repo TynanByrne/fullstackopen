@@ -1,8 +1,10 @@
 import React from 'react'
 import useField from '../hooks/useField'
 import commentService from '../services/comments'
+import { addComment } from '../reducers/blogsReducer'
+import { Button, TextField } from '@material-ui/core'
 
-const CreateComment = ({ blog }) => {
+const CreateComment = ({ blog, user, dispatch }) => {
   const { reset: resetComment, ...commentInput } = useField('text')
 
   const handleCommentSubmit = async (event) => {
@@ -14,8 +16,9 @@ const CreateComment = ({ blog }) => {
 
   const sendComment = async (comment, blog) => {
     try {
-      const savedComment = commentService.createComment(comment, blog)
+      const savedComment = await commentService.createComment(comment, blog)
       resetComment()
+      dispatch(addComment(blog, comment, user))
       console.log(savedComment)
     } catch (error) {
       resetComment()
@@ -25,8 +28,8 @@ const CreateComment = ({ blog }) => {
   return (
     <>
       <form onSubmit={handleCommentSubmit}>
-        <input {...commentInput} />
-        <button type='submit'>Add comment</button>
+        <TextField label='add comment' {...commentInput} />
+        <Button  color='primary' type='submit'>Add comment</Button>
       </form>
     </>
   )

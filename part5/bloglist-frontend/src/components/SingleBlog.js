@@ -1,13 +1,12 @@
 import React from 'react'
-import useField from '../hooks/useField'
-import commentService from '../services/comments'
 import CreateComment from './CreateComment'
+import Comments from './Comments'
 
-const SingleBlog = ({ blog, handleUpdate, handleDelete, user }) => {
+const SingleBlog = ({ blog, handleUpdate, handleDelete, user, dispatch }) => {
 
   const handleLike = () => {
     const updatedBlog = {
-      ...blog, likes: blog.likes + 1, user: blog.user.id
+      ...blog, likes: blog.likes + 1, user: blog.user.id, comments: blog.comments.map(c => c.id)
     }
     console.log(updatedBlog)
     handleUpdate(updatedBlog, user)
@@ -38,11 +37,8 @@ const SingleBlog = ({ blog, handleUpdate, handleDelete, user }) => {
       <p>{blog.likes} likes<button id='like' onClick={handleLike}>like</button></p>
       <p> added by {blog.user.name}</p>
       <h4>Comments</h4>
-      <CreateComment blog={blog} />
-      <ul>
-        {blog.comments.map(comment => 
-          <li key={comment.id}>{comment.content}</li>)}
-      </ul>
+      <CreateComment blog={blog} user={user} dispatch={dispatch} />
+      <Comments comments={blog.comments} />
       {allowDelete()}
     </>
   )
