@@ -9,12 +9,14 @@ import Togglable from './components/Togglable'
 import BlogList from './components/BlogList'
 import Message from './components/Message'
 import UserList from './components/UserList'
+import User from './components/User'
 import blogService from './services/blogs'
 import { setNotification } from './reducers/notificationReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { getBlogs, compare, deleteBlog, updateBlog } from './reducers/blogsReducer'
 import { loginFromLocalStorage, logoutUser } from './reducers/loginReducer'
 import { allUsers } from './reducers/usersReducer'
+import useMatchedHook from './hooks/useMatchedHook'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -29,7 +31,7 @@ const App = () => {
   const loggedInUser = useSelector(state => state.login)
   const users = useSelector(state => state.users)
 
-
+  const user = useMatchedHook('/users/:id', users)
 
   const handleUpdate = async (blog) => {
     try {
@@ -63,13 +65,17 @@ const App = () => {
   }
 
   return (
-    <Router>
+    <div>
       <div>
         <Link to="/">home</Link>
         <br/>
         <Link to="/users">users</Link>
       </div>
         <Switch>
+          <Route path='/users/:id'>
+            <h2>User</h2>
+            <User user={user} />
+          </Route>
           <Route path='/users'>
             <h2>Users</h2>
             <UserList dispatch={dispatch} users={users} />
@@ -90,7 +96,7 @@ const App = () => {
             <BlogList handleDelete={handleDelete} handleUpdate={handleUpdate} compare={compare} user={loggedInUser} />
           </Route>
         </Switch>
-    </Router>
+    </div>
   )
 }
 
