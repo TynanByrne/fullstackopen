@@ -1,9 +1,8 @@
 import React from 'react'
 import Blog from './Blog'
-import { useSelector } from 'react-redux'
 
-const BlogList = ({ compare, handleDelete, handleUpdate, user }) => {
-  const blogs = useSelector(state => state.blogs)
+const BlogList = ({ blogs, compare, handleDelete, handleUpdate, user }) => {
+
   return (
     <>
       {blogs.sort(compare).map(blog =>

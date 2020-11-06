@@ -1,46 +1,24 @@
 
-import React, { useState } from 'react'
-import PropTypes from 'prop-types'
+import React from 'react'
+import { Link } from 'react-router-dom'
+/* import PropTypes from 'prop-types' */
 const Blog = ({ blog, user, handleDelete, handleUpdate }) => {
-  const [visible, setVisible] = useState(false)
+  /* const [visible, setVisible] = useState(false)
 
   const toggleVisiblity = () => {
     setVisible(!visible)
-  }
+  } */
 
-  const handleLike = () => {
-    const updatedBlog = {
-      ...blog, likes: blog.likes + 1, user: blog.user.id
-    }
-    console.log(updatedBlog)
-    handleUpdate(updatedBlog)
-  }
+  
 
-  const allowDelete = () => {
-    if (!blog.user.username) {
-      return null
-    }
-    if (blog.user.username.toString() === user.username.toString()) {
-      return (
-        <>
-          <button id="delete" type="button" onClick={() => {
-            if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-              handleDelete(blog)
-            }
-          }}>
-            Delete
-          </button>
-        </>
-      )
-    }
-  }
+  
 
-  Blog.propTypes = {
+  /* Blog.propTypes = {
     blog: PropTypes.object.isRequired,
     user: PropTypes.object.isRequired,
     deleteBlog: PropTypes.func.isRequired,
     updateBlog: PropTypes.func.isRequired
-  }
+  } */
 
   const blogStyle = {
     paddingTop: 10,
@@ -50,7 +28,7 @@ const Blog = ({ blog, user, handleDelete, handleUpdate }) => {
     marginBottom: 5
   }
   return (
-    (visible) ?
+    /* (visible) ?
       <div style={blogStyle} className='blogDetailed'>
         {blog.title} {blog.author} <button onClick={toggleVisiblity}>hide</button>
         <div>
@@ -59,9 +37,9 @@ const Blog = ({ blog, user, handleDelete, handleUpdate }) => {
           <p> added by {blog.user.name}</p>
           {allowDelete()}
         </div>
-      </div> :
-      <div style={blogStyle} className='blogCollapsed'>
-        {blog.title} by {blog.author} <button id="view" onClick={toggleVisiblity}>view</button>
+      </div> : */
+      <div style={blogStyle} className='listedBlog'>
+        <Link to={`/blogs/${blog.id}`} >{blog.title} by {blog.author}</Link>
       </div>
   )
 }

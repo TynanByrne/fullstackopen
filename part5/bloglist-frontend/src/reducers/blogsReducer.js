@@ -28,12 +28,18 @@ export const createBlog = (blog, user) => {
   }
 }
 
-export const updateBlog = (blog) => {
+export const updateBlog = (blog, user) => {
   return async dispatch => {
     let updatedBlog = await blogService.updateBlog(blog)
     dispatch({
       type: 'UPDATE_BLOG',
-      data: updatedBlog
+      data: {
+        ...updatedBlog, user: {
+          username: user.username,
+          name: user.name,
+          id: user.id
+        }
+      }
     })
   }
 }
