@@ -1,4 +1,7 @@
 import React from 'react'
+import useField from '../hooks/useField'
+import commentService from '../services/comments'
+import CreateComment from './CreateComment'
 
 const SingleBlog = ({ blog, handleUpdate, handleDelete, user }) => {
 
@@ -35,6 +38,7 @@ const SingleBlog = ({ blog, handleUpdate, handleDelete, user }) => {
       <p>{blog.likes} likes<button id='like' onClick={handleLike}>like</button></p>
       <p> added by {blog.user.name}</p>
       <h4>Comments</h4>
+      <CreateComment blog={blog} />
       <ul>
         {blog.comments.map(comment => 
           <li key={comment.id}>{comment.content}</li>)}
