@@ -1,13 +1,16 @@
+import { List, ListItem, ListItemText } from '@material-ui/core'
 import React from 'react'
 
 const Comments = ({ comments }) => {
   return (
     <>
-      <ul>
+      <List>
         {comments.map(comment => (
-          <li key={comment.id}>{comment.content}</li>
+          <ListItem>
+            <ListItemText key={comment.id}>{comment.content}</ListItemText>
+          </ListItem>
         ))}
-      </ul>
+      </List>
     </>
   )
 }

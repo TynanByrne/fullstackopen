@@ -3,6 +3,7 @@ import useField from '../hooks/useField'
 import { setNotification } from '../reducers/notificationReducer'
 import blogService from '../services/blogs'
 import { createBlog } from '../reducers/blogsReducer'
+import { Button, TextField } from '@material-ui/core'
 
 const CreateBlog = ({ loggedInUser, dispatch }) => {
   
@@ -44,24 +45,27 @@ const CreateBlog = ({ loggedInUser, dispatch }) => {
   return (
     <form onSubmit={handleCreateBlog}>
       <div>
-        title: <input
+        <TextField
+          label='title'
           id="title"
           {...titleInput}
           placeholder="Title" />
       </div>
       <div>
-        author: <input
+        <TextField
+          label='author'
           id="author"
           {...authorInput}
           placeholder="Author" />
       </div>
       <div>
-        url: <input
+        <TextField
+          label='url'
           id="url"
           {...urlInput}
           placeholder="url" />
       </div>
-      <button id="submit" type="submit">create</button>
+      <Button id="submit" type="submit">create</Button>
     </form>
   )
 }

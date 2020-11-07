@@ -1,29 +1,32 @@
+import { Link, Table, TableCell, TableContainer, TableHead, TableRow, TableBody } from '@material-ui/core'
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom'
 
 const UserList = ({ users }) => {
-  return(
+  return (
     <>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Username</th>
-            <th>Blogs created</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.sort((a, b) => a.blogs.length > b.blogs.length).map(user => (
-            <tr key={user.id}>
-              <td>
-                <Link to={`/users/${user.id}`}>{user.name}</Link>
-              </td>
-              <td>{user.username}</td>
-              <td>{user.blogs.length}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <TableContainer>
+        <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+              <TableCell>Username</TableCell>
+              <TableCell>Blogs created</TableCell>
+              </TableRow> 
+            </TableHead>
+            <TableBody>
+            {users.sort((a, b) => a.blogs.length > b.blogs.length).map(user => (
+              <TableRow key={user.id}>
+                <TableCell>
+                  <Link component={RouterLink} to={`/users/${user.id}`}>{user.name}</Link>
+                </TableCell>
+                <TableCell>{user.username}</TableCell>
+                <TableCell>{user.blogs.length}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </>
   )
 }

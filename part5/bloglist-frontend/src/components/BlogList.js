@@ -17,9 +17,7 @@ const BlogList = ({ blogs, compare, handleDelete, handleUpdate, user }) => {
             </TableRow>
           )}
         </TableBody>
-
       </Table>
-
     </TableContainer>
   )
 }

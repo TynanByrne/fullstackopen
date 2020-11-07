@@ -39,7 +39,7 @@ export const updateBlog = (blog, user) => {
       data: {
         ...updatedBlog,
         user: {
-          name: user.username,
+          name: user.name,
           username: user.username,
           id: user.id
         },
@@ -49,7 +49,7 @@ export const updateBlog = (blog, user) => {
   }
 }
 
-export const addComment = (blog, comment, user) => {
+export const addComment = (blog, comment) => {
   return async dispatch => {
     const returnedComment = await commentService.createComment(comment, blog)
     const updatedBlog = blog

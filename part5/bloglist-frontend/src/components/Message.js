@@ -1,6 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { Alert } from '@material-ui/lab'
+import { lightGreen, red } from '@material-ui/core/colors'
 
 const Message = () => {
   const message = useSelector(state => state.notification)
@@ -8,7 +9,7 @@ const Message = () => {
   (message.type === 'success') ?
     messageStyle = {
       color: 'black',
-      background: 'green',
+      background: lightGreen,
       /* fontSize: 20,
       fontStyle: 'italic',
       borderRadius: 10,
@@ -18,7 +19,7 @@ const Message = () => {
     } :
     messageStyle = {
       color: 'white',
-      background: 'red',
+      background: red,
 /*       fontSize: 20,
       fontStyle: 'italic',
       borderRadius: 10,

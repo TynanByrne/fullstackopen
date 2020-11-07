@@ -1,10 +1,12 @@
 import React, { useEffect, useRef } from 'react'
 import {
-  Switch, Route, useHistory, Link
+  Switch, Route, useHistory, Link as RouterLink
 } from 'react-router-dom'
 import {
-  AppBar, Container, IconButton, Toolbar, Button
+  AppBar, Container, IconButton, Toolbar, Button, CssBaseline
 } from '@material-ui/core'
+import theme from './theme'
+import { ThemeProvider } from '@material-ui/core/styles'
 import Login from './components/Login'
 import CreateBlog from './components/CreateBlog'
 import Togglable from './components/Togglable'
@@ -20,6 +22,7 @@ import { getBlogs, compare, deleteBlog, updateBlog } from './reducers/blogsReduc
 import { loginFromLocalStorage, logoutUser } from './reducers/loginReducer'
 import { allUsers } from './reducers/usersReducer'
 import useMatchedHook from './hooks/useMatchedHook'
+import Footer from './components/Footer'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -74,44 +77,51 @@ const App = () => {
   }
 
   return (
-    <Container>
-      <AppBar position='static'>
-        <Toolbar>
-          <IconButton edge='start' color='inherit' aria-label='menu'>
-          </IconButton>
-          <Button color='inherit' component={Link} to='/'>home</Button>
-          <Button color='inherit' component={Link} to='/users'>users</Button>
-          {`${loggedInUser.name} logged in`} <Button onClick={() => {
-            dispatch(logoutUser())
-            dispatch(setNotification('Logged out', 'success', 5))
-          }} >Log out</Button>
-        </Toolbar>
-      </AppBar>
-      <h1>Blog app</h1>
-      <Switch>
-        <Route path='/users/:id'>
-          <h2>User</h2>
-          <User user={user} />
-        </Route>
-        <Route path='/users'>
-          <h2>Users</h2>
-          <UserList dispatch={dispatch} users={users} />
-        </Route>
-        <Route path='/blogs/:id'>
-          <Message />
-          <SingleBlog blog={blog} handleDelete={handleDelete} handleUpdate={handleUpdate} user={loggedInUser} dispatch={dispatch} />
-        </Route>
-        <Route path='/'>
-          <h2>blogs</h2>
-          <Message />
-          <Togglable buttonLabel={'new blog'} ref={createBlogRef}>
-            <h2>Create new</h2>
-            <CreateBlog loggedInUser={loggedInUser} dispatch={dispatch} />
-          </Togglable>
-          <BlogList blogs={blogs} handleDelete={handleDelete} handleUpdate={handleUpdate} compare={compare} user={loggedInUser} />
-        </Route>
-      </Switch>
-    </Container>
+    <ThemeProvider theme={theme}>
+      <CssBaseline>
+        <Container>
+          <AppBar position='static'>
+            <Toolbar>
+              <IconButton edge='start' color='inherit' aria-label='menu'>
+              </IconButton>
+              <Button color='inherit' component={RouterLink} to='/'>home</Button>
+              <Button color='inherit' component={RouterLink} to='/users'>users</Button>
+              {`${loggedInUser.name} logged in`} <Button onClick={() => {
+                dispatch(logoutUser())
+                dispatch(setNotification('Logged out', 'success', 5))
+              }} >Log out</Button>
+            </Toolbar>
+          </AppBar>
+          <h1>Blog app</h1>
+          <Switch>
+            <Route path='/users/:id'>
+              <h2>User</h2>
+              <User user={user} />
+            </Route>
+            <Route path='/users'>
+              <h2>Users</h2>
+              <UserList dispatch={dispatch} users={users} />
+            </Route>
+            <Route path='/blogs/:id'>
+              <Message />
+              <SingleBlog blog={blog} handleDelete={handleDelete} handleUpdate={handleUpdate} user={loggedInUser} dispatch={dispatch} />
+            </Route>
+            <Route path='/'>
+              <h2>blogs</h2>
+              <Message />
+              <Togglable buttonLabel={'new blog'} ref={createBlogRef}>
+                <h2>Create new</h2>
+                <CreateBlog loggedInUser={loggedInUser} dispatch={dispatch} />
+              </Togglable>
+              <BlogList blogs={blogs} handleDelete={handleDelete} handleUpdate={handleUpdate} compare={compare} user={loggedInUser} />
+            </Route>
+          </Switch>
+          <Footer>
+            <em>Blog app, built as part of Full Stack Open 2020 by Tynan Byrne.</em>
+          </Footer>
+        </Container>
+      </CssBaseline>
+    </ThemeProvider>
   )
 }
 
