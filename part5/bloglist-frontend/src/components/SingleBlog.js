@@ -6,7 +6,7 @@ const SingleBlog = ({ blog, handleUpdate, handleDelete, user, dispatch }) => {
 
   const handleLike = () => {
     const updatedBlog = {
-      ...blog, likes: blog.likes + 1, user: blog.user.id, comments: blog.comments.map(c => c.id)
+      ...blog, likes: blog.likes + 1, user: blog.user.id
     }
     console.log(updatedBlog)
     handleUpdate(updatedBlog, user)

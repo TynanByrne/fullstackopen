@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react'
 import {
-  Switch, Route, Link, useHistory
+  Switch, Route, useHistory, Link
 } from 'react-router-dom'
 import {
-  AppBar, Container
+  AppBar, Container, IconButton, Toolbar, Button
 } from '@material-ui/core'
 import Login from './components/Login'
 import CreateBlog from './components/CreateBlog'
@@ -75,38 +75,42 @@ const App = () => {
 
   return (
     <Container>
-      <div style={{backgroundColor: 'gray'}}>
-        <Link style={{padding: 5}} to="/">home</Link>
-        <Link style={{padding: 5}} to="/users">users</Link>
-        {`${loggedInUser.name} logged in`} <button onClick={() => {
-                dispatch(logoutUser())
-                dispatch(setNotification('Logged out', 'success', 5))
-              }} >Log out</button>
-      </div>
+      <AppBar position='static'>
+        <Toolbar>
+          <IconButton edge='start' color='inherit' aria-label='menu'>
+          </IconButton>
+          <Button color='inherit' component={Link} to='/'>home</Button>
+          <Button color='inherit' component={Link} to='/users'>users</Button>
+          {`${loggedInUser.name} logged in`} <Button onClick={() => {
+            dispatch(logoutUser())
+            dispatch(setNotification('Logged out', 'success', 5))
+          }} >Log out</Button>
+        </Toolbar>
+      </AppBar>
       <h1>Blog app</h1>
-        <Switch>
-          <Route path='/users/:id'>
-            <h2>User</h2>
-            <User user={user} />
-          </Route>
-          <Route path='/users'>
-            <h2>Users</h2>
-            <UserList dispatch={dispatch} users={users} />
-          </Route>
-          <Route path='/blogs/:id'>
-            <Message />
-            <SingleBlog blog={blog} handleDelete={handleDelete} handleUpdate={handleUpdate} user={loggedInUser} dispatch={dispatch} />
-          </Route>
-          <Route path='/'>
-            <h2>blogs</h2>
-            <Message />
-            <Togglable buttonLabel={'new blog'} ref={createBlogRef}>
-              <h2>Create new</h2>
-              <CreateBlog loggedInUser={loggedInUser} dispatch={dispatch} />
-            </Togglable>
-            <BlogList blogs={blogs} handleDelete={handleDelete} handleUpdate={handleUpdate} compare={compare} user={loggedInUser} />
-          </Route>
-        </Switch>
+      <Switch>
+        <Route path='/users/:id'>
+          <h2>User</h2>
+          <User user={user} />
+        </Route>
+        <Route path='/users'>
+          <h2>Users</h2>
+          <UserList dispatch={dispatch} users={users} />
+        </Route>
+        <Route path='/blogs/:id'>
+          <Message />
+          <SingleBlog blog={blog} handleDelete={handleDelete} handleUpdate={handleUpdate} user={loggedInUser} dispatch={dispatch} />
+        </Route>
+        <Route path='/'>
+          <h2>blogs</h2>
+          <Message />
+          <Togglable buttonLabel={'new blog'} ref={createBlogRef}>
+            <h2>Create new</h2>
+            <CreateBlog loggedInUser={loggedInUser} dispatch={dispatch} />
+          </Togglable>
+          <BlogList blogs={blogs} handleDelete={handleDelete} handleUpdate={handleUpdate} compare={compare} user={loggedInUser} />
+        </Route>
+      </Switch>
     </Container>
   )
 }

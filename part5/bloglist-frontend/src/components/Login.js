@@ -2,6 +2,7 @@ import React from 'react'
 import useField from '../hooks/useField'
 import { setNotification } from '../reducers/notificationReducer'
 import { loginUser } from '../reducers/loginReducer'
+import { Button, TextField } from '@material-ui/core'
 
 const Login = ({ dispatch }) => {
   const { reset: resetUsername, ...usernameInput } = useField('text')
@@ -25,15 +26,13 @@ const Login = ({ dispatch }) => {
   return (
     <form onSubmit={handleLogin}>
       <div>
-        username
-        <input id= "username" {...usernameInput} name="Username" placeholder="Username" />
+        <TextField id="username" label='username' {...usernameInput} name="Username" placeholder="Username" />
       </div>
       <div>
-        password
-        <input id="password" {...passwordInput} name="Password" placeholder="Password" />
+        <TextField id="password" {...passwordInput}  name="Password" placeholder="Password" />
       </div>
       <div>
-        <button id="login-button" type="submit">Log in</button>
+        <Button cariant='contained' id="login-button" type="submit">Log in</Button>
       </div>
     </form>
   )

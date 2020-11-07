@@ -32,14 +32,18 @@ export const createBlog = (blog, user) => {
 export const updateBlog = (blog, user) => {
   return async dispatch => {
     let updatedBlog = await blogService.updateBlog(blog)
+    console.log("BLOG IS", blog)
+    console.log("UPDATED BLOG IS", updatedBlog)
     dispatch({
       type: 'UPDATE_BLOG',
       data: {
-        ...updatedBlog, user: {
+        ...updatedBlog,
+        user: {
+          name: user.username,
           username: user.username,
-          name: user.name,
           id: user.id
-        }
+        },
+        comments: [...blog.comments]
       }
     })
   }
