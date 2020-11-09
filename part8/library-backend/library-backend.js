@@ -170,6 +170,7 @@ const resolvers = {
       const filter = { name: args.name }
       const update = { born: args.setBornTo }
       try {
+        // Mongoose recommends using save() over this. Remember for next time!
         return Author.findOneAndUpdate(filter, update, {
           new: true, runValidators: true, context: 'query'
         })
