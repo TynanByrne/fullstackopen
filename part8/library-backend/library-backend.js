@@ -1,4 +1,9 @@
-const { ApolloServer, gql } = require('apollo-server')
+const { ApolloServer, gql, UserInputError } = require('apollo-server')
+const mongoose = require('mongoose')
+const Author = require('./models/author')
+const Book = require('./models/book')
+const { v1: uuid } = require('uuid')
+require('dotenv').config()
 
 let authors = [
   {
@@ -16,11 +21,11 @@ let authors = [
     id: "afa5b6f1-344d-11e9-a414-719c6709cf3e",
     born: 1821
   },
-  { 
+  {
     name: 'Joshua Kerievsky', // birthyear not known
     id: "afa5b6f2-344d-11e9-a414-719c6709cf3e",
   },
-  { 
+  {
     name: 'Sandi Metz', // birthyear not known
     id: "afa5b6f3-344d-11e9-a414-719c6709cf3e",
   },
@@ -55,7 +60,7 @@ let books = [
     author: 'Joshua Kerievsky',
     id: "afa5de01-344d-11e9-a414-719c6709cf3e",
     genres: ['refactoring', 'patterns']
-  },  
+  },
   {
     title: 'Practical Object-Oriented Design, An Agile Primer Using Ruby',
     published: 2012,
@@ -83,7 +88,7 @@ const typeDefs = gql`
   type Book {
     title: String!
     published: Int!
-    author: String!
+    author: Author!
     id: ID!
     genres: [String!]
   }
@@ -96,24 +101,98 @@ const typeDefs = gql`
   type Query {
     bookCount: Int!
     authorCount: Int!
-    allBooks(author: String): [Book]
+    allBooks(author: String, genre: String): [Book]
     allAuthors: [Author!]
+  }
+  type Mutation {
+    addBook(
+      title: String!
+      published: Int!
+      author: String!
+      genres: [String!]
+    ) : Book
+    editAuthor(
+      name: String!
+      setBornTo: Int!
+    ) : Author
   }
 `
 
 const resolvers = {
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
-    allBooks: (root, args) => args.author ? books.filter(b => b.author === args.author) : books,
-    allAuthors: () => authors.map(author => {
-      return {
-        ...author,
-        bookCount: books.filter(book => book.author === author.name).length
+    bookCount: () => Book.collection.countDocuments(),
+    authorCount: () => Author.collection.countDocuments(),
+    allBooks: async (root, { author, genre }) => {
+      const filter = {}
+      if (author) {
+        const authorObject = await Author.find({ name: author })
+        filter.author = authorObject
       }
-    })
+      if (genre) {
+        filter.genres = genre
+      }
+
+      return await Book.find(filter)
+    },
+
+    allAuthors: async () => await Author.find({})
+  },
+  Mutation: {
+    addBook: async (root, args) => {
+      const authors = await Author.find({})
+      let author
+
+      if (authors.find(a => a.name === args.author)) {
+        author = await Author.findOne({ name: args.author })
+        author.bookCount++
+      } else {
+        const newAuthor = {
+          name: args.author,
+          born: null,
+          bookCount: 1
+        }
+        author = new Author(newAuthor)
+      }
+
+      if (author) {
+        const book = new Book({ ...args, author })
+        try {
+          await author.save()
+          return book.save()
+        } catch (error) {
+          throw new UserInputError(error.message, {
+            invalidArgs: args,
+          })
+        }
+      }
+    },
+    editAuthor: async (root, args) => {
+      const filter = { name: args.name }
+      const update = { born: args.setBornTo }
+      try {
+        return Author.findOneAndUpdate(filter, update, {
+          new: true, runValidators: true, context: 'query'
+        })
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args
+        })
+      }
+      
+    }
   }
 }
+
+mongoose
+  .connect(process.env.MONGO_URI,
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false,
+      useCreateIndex: true
+    })
+  .then(() => console.log("Connected to that MONGO"))
+  .catch((error) => console.error('Failed to connect to MongoDB. Try again.', error.message))
 
 const server = new ApolloServer({
   typeDefs,
