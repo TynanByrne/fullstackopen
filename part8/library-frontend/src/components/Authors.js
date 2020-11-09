@@ -1,12 +1,17 @@
-
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import Select from 'react-select'
 import useField from '../hooks/useField'
 import { useMutation } from '@apollo/client'
 import { EDIT_AUTHOR, ALL_AUTHORS, ALL_BOOKS } from '../queries'
 
 const Authors = ({ show, authors }) => {
-  const { reset: resetName, ...name } = useField('text')
   const { reset: resetBirthyear, ...birthyear } = useField('number')
+  const [selectedOption, setSelectedOption] = useState(null)
+  console.log(authors)
+
+  const options = authors.map(a => {
+    return { value: a.name, label: a.name }
+  })
 
   const [ changeAuthor, result ] = useMutation(EDIT_AUTHOR, {
     refetchQueries: [ { query: ALL_AUTHORS }, { query: ALL_BOOKS } ]
@@ -15,8 +20,8 @@ const Authors = ({ show, authors }) => {
   const submit = (event) => {
     event.preventDefault()
 
-    changeAuthor({ variables: { name: name.value, setBornTo: parseInt(birthyear.value) }})
-    resetName()
+    changeAuthor({ variables: { name: selectedOption.value, setBornTo: parseInt(birthyear.value) }})
+    setSelectedOption(null)
     resetBirthyear()
   }
 
@@ -55,9 +60,13 @@ const Authors = ({ show, authors }) => {
 
       <h2>Set birthyear</h2>
       <form onSubmit={submit}>
-        <div>
-          name <input {...name} />
-        </div>
+        <Select
+          defaultvalue={selectedOption}
+          onChange={setSelectedOption}
+          options={options}
+          placeholder='Select author'
+          autoFocus
+        />
         <div>
           birthyear <input {...birthyear} />
         </div>
