@@ -7,7 +7,6 @@ import { EDIT_AUTHOR, ALL_AUTHORS, ALL_BOOKS } from '../queries'
 const Authors = ({ show, authors }) => {
   const { reset: resetBirthyear, ...birthyear } = useField('number')
   const [selectedOption, setSelectedOption] = useState(null)
-  console.log(authors)
 
   const options = authors.map(a => {
     return { value: a.name, label: a.name }
@@ -21,7 +20,6 @@ const Authors = ({ show, authors }) => {
     event.preventDefault()
 
     changeAuthor({ variables: { name: selectedOption.value, setBornTo: parseInt(birthyear.value) }})
-    setSelectedOption(null)
     resetBirthyear()
   }
 
