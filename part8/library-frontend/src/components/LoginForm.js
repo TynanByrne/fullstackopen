@@ -17,7 +17,7 @@ const LoginForm = ({ show, setToken, setLoggedIn, setPage }) => {
       setToken(token)
       localStorage.setItem('libraryApp-user-token', token)
     }
-  }, [result.data, setToken()])
+  }, [result.data, setToken])
 
   const submit = (event) => {
     event.preventDefault()

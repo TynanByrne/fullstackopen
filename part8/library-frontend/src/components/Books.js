@@ -1,6 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-const Books = ({ show, books}) => {
+const Books = ({ show, books }) => {
+  const [selectedGenre, setSelectedGenre] = useState('all genres')
+
+  const allGenres = books.map(b => b.genres).flat(Infinity)
+  let genres = [...new Set(allGenres)]
+  console.log(genres)
+
+
   if (!show) {
     return null
   }
@@ -9,6 +16,7 @@ const Books = ({ show, books}) => {
     <div>
       <h2>books</h2>
 
+      <div>Selected genre: {selectedGenre}</div>
       <table>
         <tbody>
           <tr>
@@ -20,7 +28,8 @@ const Books = ({ show, books}) => {
               published
             </th>
           </tr>
-          {books.map(a =>
+          {books.filter(b => (selectedGenre === 'all genres')
+          ? b : b.genres.includes(selectedGenre)).map(a =>
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>
@@ -29,6 +38,12 @@ const Books = ({ show, books}) => {
           )}
         </tbody>
       </table>
+      <div>
+        {genres.map(g =>
+          <button key={g} onClick={() => setSelectedGenre(g)}>{g}</button>
+        )}
+        <button onClick={() => setSelectedGenre('all genres')}>all genres</button>
+      </div>
     </div>
   )
 }

@@ -20,6 +20,7 @@ query allBooks($author: String, $genre: String) {
       name
       born
     }
+    genres
   }
 }
 `
@@ -28,6 +29,14 @@ export const ME = gql`
   query me {
     me {
       username
+      favouriteGenre
+    }
+  }
+`
+
+export const FAVOURITE_GENRE = gql`
+  query favGenre {
+    me {
       favouriteGenre
     }
   }

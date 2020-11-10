@@ -4,8 +4,9 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
-import { useApolloClient, useQuery } from '@apollo/client'
-import { ALL_AUTHORS, ALL_BOOKS, ME } from './queries'
+import Recommendations from './components/Recommendations'
+import { useApolloClient, useQuery, useLazyQuery } from '@apollo/client'
+import { ALL_AUTHORS, ALL_BOOKS, ME, FAVOURITE_GENRE } from './queries'
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -13,12 +14,17 @@ const App = () => {
   const [loggedIn, setLoggedIn] = useState(false)
   const authorResult = useQuery(ALL_AUTHORS)
   const bookResult = useQuery(ALL_BOOKS)
-  const meResult = useQuery(ME)
+  const meResult = useQuery(ME, {
+    pollInterval: 1000
+  })
+  const [ getGenre, genreResult ] = useLazyQuery(FAVOURITE_GENRE)
   const client = useApolloClient()
 
   useEffect(() => {
-    if (meResult.data){
+    if (meResult.data && meResult.data.me){
       setLoggedIn(true)
+    } else {
+      setLoggedIn(false)
     }
   }, [meResult.data])
 
@@ -38,7 +44,12 @@ const App = () => {
       return (
         <>
           <button onClick={() => setPage('add')}>add book</button>
-          <button onClick={() => setPage('logout')}>logout</button>
+          <button onClick={() => logOut()}>logout</button>
+          <button onClick={() => {
+            getGenre()
+            console.log(genreResult.data)
+            setPage('recommendations')
+          }}>recommendations</button>
         </>
       )
     } else {
@@ -50,7 +61,7 @@ const App = () => {
     }
   }
   const userLine = () => {
-    if (meResult.data) {
+    if (meResult.data.me) {
       console.log(meResult.data)
       return (
         <div>
@@ -60,6 +71,8 @@ const App = () => {
       )
     }
   }
+
+  
 
   return (
     <div>
@@ -89,6 +102,11 @@ const App = () => {
         setToken={setToken}
         setLoggedIn={setLoggedIn}
         setPage={setPage}
+      />
+
+      <Recommendations
+        show={page === 'recommendations'}
+        genreResult={genreResult}
       />
 
     </div>
