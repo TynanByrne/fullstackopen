@@ -7,11 +7,20 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "ts-node": "ts-node",
     "bmiCalculator": "ts-node bmiCalculator.ts",
-    "exerciseCalculator": "ts-node exerciseCalculator.ts"
+    "exerciseCalculator": "ts-node exerciseCalculator.ts",
+    "start": "ts-node index.ts",
+    "dev": "ts-node-dev index.ts"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^14.14.7"
+    "@types/express": "^4.17.9",
+    "@types/node": "^14.14.7",
+    "ts-node-dev": "^1.0.0",
+    "typescript": "^4.0.5"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
   }
 }
