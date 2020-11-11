@@ -3,9 +3,6 @@ import React, { useEffect } from 'react'
 import { ALL_BOOKS } from '../queries'
 
 const Recommendations = ({ show, genreResult }) => {
-  
-  console.log(genreResult.loading)
-  console.log(genreResult.data)
 
   const [getRecommendations, result] = useLazyQuery(ALL_BOOKS)
 
