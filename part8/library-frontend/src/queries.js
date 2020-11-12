@@ -19,6 +19,7 @@ query {
     name,
     born,
     bookCount
+    id
   }
 }
 `

@@ -4,11 +4,11 @@ const app = express()
 const cors = require('cors')
 require('express-async-errors')
 const mongoose = require('mongoose')
-const Blog = require('./models/blog')
 const logger = require('./utils/logger')
 const blogsRouter = require('./controllers/blogs')
 const usersRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
+const commentsRouter = require('./controllers/comments')
 const middleware = require('./utils/middleware')
 
 logger.info(`Connecting to MONGO through ${config.MONGODB_URI}...`)
@@ -27,6 +27,11 @@ app.use(middleware.tokenExtractor)
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
+app.use('/api/blogs/:id/comments', commentsRouter)
+if (process.env.NODE_ENV === 'test') {
+  const testingRouter = require('./controllers/testing')
+  app.use('/api/testing', testingRouter)
+}
 
 app.use(middleware.errorHandler)
 

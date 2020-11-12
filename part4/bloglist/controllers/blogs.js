@@ -1,14 +1,15 @@
+/* eslint-disable no-undef */
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const logger = require('../utils/logger')
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
-const { request } = require('express')
 
 blogsRouter.get('/', (req, res) => {
   Blog
     .find({})
     .populate('user', { username: 1, name: 1 })
+    .populate('comments', { content: 1, blog: 1 })
     .then(blogs => {
       res.json(blogs)
     })
@@ -28,7 +29,8 @@ blogsRouter.post('/', async (request, response) => {
     author: body.author,
     url: body.url,
     likes: body.likes,
-    user: user._id
+    user: user._id,
+    comments: []
   })
 
   if (!blog.title || !blog.url) {

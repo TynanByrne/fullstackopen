@@ -32,7 +32,7 @@ const Login = ({ dispatch }) => {
         <TextField id="password" {...passwordInput}  name="Password" placeholder="Password" />
       </div>
       <div>
-        <Button cariant='contained' id="login-button" type="submit">Log in</Button>
+        <Button variant='contained' id="login-button" type="submit">Log in</Button>
       </div>
     </form>
   )
