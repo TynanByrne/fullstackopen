@@ -1,12 +1,12 @@
 import express from 'express';
-import diagnosesService from '../../services/diagnosesService'
+import diagnosesService from '../../services/diagnosesService';
 import { Diagnose } from '../../types';
 
 const router = express.Router();
 
-router.get('/', async (_req, res) => {
-  const diagnoses: Diagnose[] = diagnosesService.getEntries()
-  res.json(diagnoses)
-})
+router.get('/', (_req, res) => {
+  const diagnoses: Diagnose[] = diagnosesService.getDiagnoses();
+  res.json(diagnoses);
+});
 
-export default router
+export default router;
