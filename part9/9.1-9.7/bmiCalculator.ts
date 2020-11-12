@@ -1,4 +1,4 @@
-export const bmiCalculator = (height: number, mass: number) => {
+export const bmiCalculator = (height: number, mass: number): string => {
   const bmi = mass / Math.pow(height / 100, 2);
   if (bmi < 15) return "Very severely underweight";
   if (bmi > 15 && bmi <= 16) return "Severely underweight";
@@ -10,7 +10,7 @@ export const bmiCalculator = (height: number, mass: number) => {
   if (bmi > 40) return "Obese Class III (Very severely obese)";
 
   return 'Something went wrong.';
-}
+};
 
 interface stats {
   height: number,
@@ -25,15 +25,15 @@ const parseArguments = (args: Array<string>): stats => {
     return {
       height: Number(args[2]),
       mass: Number(args[3])
-    }
+    };
   } else {
     throw new Error('Provided values were not numbers!');
   }
-}
+};
 
 if (require.main === module) {
   try {
-    const { height, mass } = parseArguments(process.argv)
+    const { height, mass } = parseArguments(process.argv);
     console.log(bmiCalculator(height, mass));
   } catch (error) {
     console.log('ERR! Something happened.', error.message);
