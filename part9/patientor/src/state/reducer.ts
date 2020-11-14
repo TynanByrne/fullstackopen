@@ -46,8 +46,20 @@ export const reducer = (state: State, action: Action): State => {
             ...action.payload
           }
         }
-      }
+      };
     default:
       return state;
   }
+};
+
+export const updatePatient = (data: Patient): Action => {
+  return { type: 'UPDATE_SINGLE_PATIENT', payload: data };
+};
+
+export const setAllPatients = (data: Patient[]): Action => {
+  return { type: 'SET_PATIENT_LIST', payload: data };
+};
+
+export const addPatient = (data: Patient): Action => {
+  return { type: 'ADD_PATIENT', payload: data };
 };

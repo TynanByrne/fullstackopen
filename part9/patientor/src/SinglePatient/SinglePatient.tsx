@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
-import { Patient } from '../types'
-import { useStateValue } from "../state";
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import EntryDetails from './EntryDetails'
+import { Entry, Patient, Diagnosis } from '../types';
+import { updatePatient, useStateValue } from "../state";
 import { Icon } from "semantic-ui-react";
-import axios from 'axios'
+import axios from 'axios';
 import { apiBaseUrl } from '../constants';
 
 const genderIconProps = {
@@ -26,7 +27,7 @@ const SinglePatient: React.FC = () => {
     setError(undefined);
   };
 
-  let patient = patients[id]
+  const patient = patients[id];
 
   useEffect(() => {
     const fetchPatient = async () => {
@@ -34,28 +35,28 @@ const SinglePatient: React.FC = () => {
         const { data: fetchedPatient } = await axios.get<Patient>(
           `${apiBaseUrl}/patients/${id}`
         );
-        dispatch({ type: "UPDATE_SINGLE_PATIENT", payload: fetchedPatient})
+        dispatch(updatePatient(fetchedPatient));
       } catch (error) {
-        console.error(error.response.data)
-        setError(error.response.data.error)
+        console.error(error.response.data);
+        setError(error.response.data.error);
       }
-    }
-    if (!patient.ssn) {
+    };
+    if (!patient.ssn || !patient.entries) {
       fetchPatient();
       console.log("Patient fetched");
+      console.log(patient)
     }
-  }, [id, dispatch])
-  
+  }, [id, dispatch, patient.ssn]);
 
-  console.log("We are here")
-
-  if (!patient) {
+  if (!patient || !patient.entries) {
     return (
       <div>
         Could not find patient...
       </div>
-    )
+    );
   }
+
+  console.log(patient)
 
   return (
     <>
@@ -69,8 +70,9 @@ const SinglePatient: React.FC = () => {
       <p>
         date of birth: {patient.dateOfBirth}
       </p>
+      <EntryDetails patient={patient} />
     </>
-  )
-}
+  );
+};
 
-export default SinglePatient
+export default SinglePatient;
