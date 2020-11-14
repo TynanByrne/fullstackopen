@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import EntryDetails from './EntryDetails'
 import { Entry, Patient, Diagnosis } from '../types';
 import { updatePatient, useStateValue } from "../state";
 import { Icon } from "semantic-ui-react";
 import axios from 'axios';
 import { apiBaseUrl } from '../constants';
+import EntryDetails from './EntryDetails';
 
 const genderIconProps = {
   male: { name: "mars" as "mars", color: "blue" as "blue" },
@@ -70,7 +70,10 @@ const SinglePatient: React.FC = () => {
       <p>
         date of birth: {patient.dateOfBirth}
       </p>
-      <EntryDetails patient={patient} />
+      <h3>Entries</h3>
+      {patient.entries.map((e: Entry) =>
+        <EntryDetails key={e.id} entry={e} />
+      )}
     </>
   );
 };
