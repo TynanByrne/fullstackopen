@@ -1,4 +1,3 @@
-import e from 'express';
 import express from 'express';
 import patientsService from '../services/patientsService';
 import { SsnLessPatient, Patient } from '../types';
@@ -14,12 +13,17 @@ router.get('/', (_req, res) => {
 router.post('/', (req, res) => {
   const newPatient = toNewPatient(req.body);
   const addedPatient = patientsService.addPatient(newPatient);
-  res.json(addedPatient)
+  return res.json(addedPatient)
 })
 
 router.get('/:id', (req, res) => {
-  const patient: Patient | undefined = patientsService.getSinglePatient(req.params.id)
-  return res.json(patient)
+  try {
+    const patient: Patient | undefined = patientsService.getSinglePatient(req.params.id)
+    return res.json(patient)
+  } catch (err) {
+    return res.status(400).json({ error: err.message })
+  }
+
 })
 
 router.post('/:id/entries', (req, res) => {
@@ -30,10 +34,10 @@ router.post('/:id/entries', (req, res) => {
       const updatedPatient = patientsService.addEntry(patient, newEntry)
       return res.json(updatedPatient)
     } catch (error) {
-      res.status(400).send({ error: e.message })
+      return res.status(400).send({ error: error.message })
     }
   } else {
-    res.status(404).json({ error: 'Patient could not be found' })
+    return res.status(404).json({ error: 'Patient could not be found' })
   }
 })
 

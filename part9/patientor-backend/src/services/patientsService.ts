@@ -38,7 +38,7 @@ const addEntry = (patient: Patient, entry: Entry): Patient | undefined => {
   const newEntry: Entry = { ...entry, id: uuidv4() }
   const savedPatient: Patient = { ...patient, entries: patient.entries.concat(newEntry) }
   storedPatients = storedPatients.map(p => 
-    p.id === storedPatients.id ? savedPatient : p
+    p.id === savedPatient.id ? savedPatient : p
   );
   return savedPatient;
 }
