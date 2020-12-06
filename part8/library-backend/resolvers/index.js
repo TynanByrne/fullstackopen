@@ -1,7 +1,12 @@
 const { UserInputError, AuthenticationError, PubSub } = require('apollo-server')
 const Author = require('../models/author')
+const User = require('../models/user')
 const Book = require('../models/book')
+const jwt = require('jsonwebtoken')
 const pubsub = new PubSub()
+require('dotenv').config()
+
+const secret = process.env.SECRET
 
 const resolvers = {
   Query: {
